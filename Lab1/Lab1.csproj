@@ -7,12 +7,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="paczka.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="paczka.cs" />
-  </ItemGroup>
-
 </Project>

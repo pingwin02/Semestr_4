@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Lab1
 {
+    [Serializable]
     public class Comparer : IComparer<string>
     {
         public int Compare(string? a, string? b)

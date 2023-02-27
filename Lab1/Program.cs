@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Lab1
 {
@@ -13,6 +15,8 @@ namespace Lab1
             PrintRecursiveFiles(path, 0);
             Console.WriteLine($"\nNajstarszy plik: {new DirectoryInfo(path).GetOldestDate()}\n");
             CreateCollection(new DirectoryInfo(path));
+            Deserialize();
+
         }
 
         static void PrintRecursiveFiles(string path, int depth)
@@ -122,11 +126,50 @@ namespace Lab1
                 collection.Add(file.Name, (int)file.Length);
             }
 
+            FileStream fs = new FileStream("DataFile.dat", FileMode.Create);
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                formatter.Serialize(fs, collection);
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs.Close();
+            }
+
+        }
+
+        static void Deserialize()
+        {
+
+            SortedDictionary<string, int> collection = null;
+
+            FileStream fs = new FileStream("DataFile.dat", FileMode.Open);
+            try
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+
+                collection = (SortedDictionary<string, int>)formatter.Deserialize(fs);
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs.Close();
+            }
+
             foreach (var file in collection)
             {
                 Console.WriteLine($"{file.Key} -> {file.Value}");
             }
-
         }
 
     }
