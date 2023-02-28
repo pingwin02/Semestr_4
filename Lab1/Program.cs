@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Lab1
 {
-    static class Program
+    public static class Program
     {
         static void Main(string[] args)
         {
@@ -46,75 +42,9 @@ namespace Lab1
 
         }
 
-        static DateTime GetOldestDate(this DirectoryInfo directory)
-        {
-            DateTime oldestDate = DateTime.Now;
-
-            foreach (FileInfo file in directory.GetFiles())
-            {
-                if (file.CreationTime < oldestDate)
-                {
-                    oldestDate = file.CreationTime;
-                }
-            }
-
-            foreach (DirectoryInfo dir in directory.GetDirectories())
-            {
-                DateTime time = GetOldestDate(dir);
-                if (time < oldestDate)
-                {
-                    oldestDate = time;
-                }
-            }
-
-            return oldestDate;
-        }
-
-        static string GetRahs(this FileSystemInfo fsi)
-        {
-            string rahs = "";
-
-            FileAttributes attributes = fsi.Attributes;
-
-            if ((FileAttributes.ReadOnly & attributes) == FileAttributes.ReadOnly)
-            {
-                rahs += 'r';
-            }
-            else
-            {
-                rahs += '-';
-            }
-            if ((FileAttributes.Archive & attributes) == FileAttributes.Archive)
-            {
-                rahs += 'a';
-            }
-            else
-            {
-                rahs += '-';
-            }
-            if ((FileAttributes.Hidden & attributes) == FileAttributes.Hidden)
-            {
-                rahs += 'h';
-            }
-            else
-            {
-                rahs += '-';
-            }
-            if ((FileAttributes.System & attributes) == FileAttributes.System)
-            {
-                rahs += 's';
-            }
-            else
-            {
-                rahs += '-';
-            }
-
-            return rahs;
-        }
-
         static void CreateCollection(DirectoryInfo path)
         {
-            SortedDictionary<string, int> collection = new SortedDictionary<string, int>(new Comparer());
+            SortedList<string, int> collection = new SortedList<string, int>(new Comparer());
 
             foreach (DirectoryInfo dir in path.GetDirectories())
             {
@@ -147,14 +77,14 @@ namespace Lab1
         static void Deserialize()
         {
 
-            SortedDictionary<string, int> collection = null;
+            SortedList<string, int> collection = null;
 
             FileStream fs = new FileStream("DataFile.dat", FileMode.Open);
             try
             {
                 BinaryFormatter formatter = new BinaryFormatter();
 
-                collection = (SortedDictionary<string, int>)formatter.Deserialize(fs);
+                collection = (SortedList<string, int>)formatter.Deserialize(fs);
             }
             catch (SerializationException e)
             {

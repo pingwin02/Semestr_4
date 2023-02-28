@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Lab1
+﻿namespace Lab1
 {
     [Serializable]
     public class Comparer : IComparer<string>
