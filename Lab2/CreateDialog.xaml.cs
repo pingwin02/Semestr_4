@@ -23,7 +23,7 @@ namespace Lab2
         private void OK(object sender, RoutedEventArgs e)
         {
             if (fileName.Text == "" || ((bool)isFile.IsChecked &&
-                !Regex.IsMatch(fileName.Text, "^[a-zA-Z0-9_~-]{1,8}\\.(txt|php|html)$")))
+                !Regex.IsMatch(fileName.Text, @"^[a-zA-Z0-9_~-]{1,8}\.(txt|php|html)$")))
             {
                 MessageBox.Show("Name is incorrect!", "Error!");
             }
@@ -79,3 +79,6 @@ namespace Lab2
 
     }
 }
+
+//Explain what this do
+// Regex.IsMatch(fileName.Text, "^[a-zA-Z0-9_~-]{1,8}\\.(txt|php|html)$"))

@@ -115,6 +115,17 @@ namespace Lab2
             if (selected != null)
             {
                 string selectedPath = (string)selected.Tag;
+
+                if (selectedPath == startingPath)
+                {
+                    tree.Items.Clear();
+                }
+                else
+                {
+                    TreeViewItem parent = (TreeViewItem)selected.Parent;
+                    parent.Items.Remove(selected);
+                }
+
                 FileAttributes attributes = File.GetAttributes(selectedPath);
                 File.SetAttributes(selectedPath,
                    attributes & ~FileAttributes.ReadOnly);
@@ -133,15 +144,6 @@ namespace Lab2
                     File.Delete(selectedPath);
                 }
 
-                if (tree.Items.Count == 1) //do naprawy
-                {
-                    tree.Items.Clear();
-                }
-                else
-                {
-                    TreeViewItem parent = (TreeViewItem)selected.Parent;
-                    parent.Items.Remove(selected);
-                }
             }
         }
 

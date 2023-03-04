@@ -16,10 +16,10 @@
             </Menu>
         </ToolBar>
         <TreeView x:Name="tree" Margin="0,40,400,20"/>
-        <ScrollViewer Margin="405,40,0,20" HorizontalScrollBarVisibility="Auto">
+        <ScrollViewer Margin="400,40,0,0" HorizontalScrollBarVisibility="Auto">
             <TextBlock x:Name="viewer"/>
         </ScrollViewer>
-        <StatusBar VerticalAlignment="Bottom" Height="20">
+        <StatusBar VerticalAlignment="Bottom" Height="20" Margin="0,0,400,0">
             <TextBlock x:Name="status"/>
         </StatusBar>
     </Grid>
