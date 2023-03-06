@@ -22,10 +22,18 @@ x_train = train_data['Weight'].to_numpy()
 y_test = test_data['MPG'].to_numpy()
 x_test = test_data['Weight'].to_numpy()
 
-# TODO: calculate closed-form solution
+# calculate closed-form solution
 theta_best = [0, 0]
+x_train = np.c_[np.ones(len(x_train)), x_train]
+theta_best = np.linalg.inv(x_train.T.dot(x_train)).dot(x_train.T).dot(y_train)
 
-# TODO: calculate error
+# calculate error
+
+RSS = 0
+for i in range(len(x_test)):
+    RSS += (theta_best[1] * x_test[i] + theta_best[0] - y_test[i]) ** 2
+MSE = RSS / len(x_test)
+print('MSE: ', MSE)
 
 # plot the regression line
 x = np.linspace(min(x_test), max(x_test), 100)
