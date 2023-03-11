@@ -1,11 +1,12 @@
 %% SPRAWOZDANIE LABORATORIUM 2
-% DAMIAN JANKOWSKI s188597
+% Damian Jankowski s188597
+
+%% Zadanie 1. Pęcherzyki
 
 %% Przygotowanie środowiska
 % Zamknięcie okien i usunięcie zmiennych
 clear all
 close all
-
 
 %% Deklaracja zmiennych
 
@@ -14,11 +15,11 @@ r_max = a/2; % Maksymalny promień każdego okręgu
 n_max = 200; % Ilość okręgów
 
 % Wektory do składowania informacji o wygenerowanych okręgach
-x = zeros(n_max, 1);
-y = zeros(n_max, 1);
-r = zeros(n_max, 1);
-areas = zeros(n_max, 1); % Pole okregów
-tries = ones(n_max, 1); % Ilość prób wylosowania
+x = zeros(1, n_max);
+y = zeros(1, n_max);
+r = zeros(1, n_max);
+areas = zeros(1, n_max); % Pole okregów
+tries = ones(1, n_max); % Ilość prób wylosowania
 
 n = 1; % Numer bieżącego okręgu
 
@@ -32,7 +33,7 @@ while n <= n_max
     R = rand(1)*r_max;
 
     % Sprawdzenie czy okrąg o wylosowanych wartościach zmieści się w
-    % kwadracie o boku $a$ 
+    % kwadracie o boku a
     if (X - R) > 0 && (X + R) < a && ...
        (Y - R) > 0 && (Y + R) < a
         isCrossing = false;
@@ -73,7 +74,7 @@ end
 
 %% Zadanie A
 % Wykres sumy powierzchni kół zawartych w rysowanych okręgach
-% w funkcji liczby dotychczas narysowanych okregów
+% w funkcji liczby dotychczas narysowanych okręgów
 
 figure
 plot(cumsum(areas))
@@ -82,10 +83,10 @@ ylabel("Powierzchnia")
 title("Powierzchnia całkowita kół")
 
 %% Zadanie B
-% Wykres przedstawiajacy historię średniej liczby losowań wymaganych
-% do narysowania pierwszych $n$ okregów
+% Wykres przedstawiający historię średniej liczby losowań wymaganych
+% do narysowania pierwszych $n$ okręgów
 figure
-plot(cumsum(tries)./(1:n_max)')
+plot(cumsum(tries)./(1:n_max))
 xlabel("Liczba narysowanych okręgów")
 ylabel("Liczba losowań")
 title("Średnia liczba losowań")
