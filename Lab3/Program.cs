@@ -33,6 +33,7 @@ namespace Lab3
             Exercise5();
             Console.WriteLine("\nExercise 6:\n");
             Exercise6();
+
         }
 
         private static void Exercise1()
@@ -41,8 +42,8 @@ namespace Lab3
                          where car.model == "A6"
                          select new
                          {
-                             engineType = car.engine.model.Contains("TDI") ? "diesel" : "petrol",
-                             hppl = car.engine.horsePower / car.engine.displacement
+                             engineType = car.motor.model.Contains("TDI") ? "diesel" : "petrol",
+                             hppl = car.motor.horsePower / car.motor.displacement
                          };
 
             foreach (var item in result)
@@ -71,7 +72,7 @@ namespace Lab3
 
             foreach (var car in (List<Car>)ser.Deserialize(reader))
             {
-                Console.WriteLine($"{car.model} {car.engine.model} {car.year}");
+                Console.WriteLine($"{car.model} {car.motor.model} {car.year}");
             }
 
             reader.Close();
@@ -98,9 +99,9 @@ namespace Lab3
                                           select new XElement("car",
                                               new XElement("model", car.model),
                                               new XElement("engine",
-                                                  new XAttribute("model", car.engine.model),
-                                                  new XElement("displacement", car.engine.displacement),
-                                                  new XElement("horsePower", car.engine.horsePower)
+                                                  new XAttribute("model", car.motor.model),
+                                                  new XElement("displacement", car.motor.displacement),
+                                                  new XElement("horsePower", car.motor.horsePower)
                                               ),
                                               new XElement("year", car.year));
 
@@ -129,9 +130,9 @@ namespace Lab3
                             from car in myCars
                             select new XElement("tr",
                                 new XElement("td", car.model),
-                                new XElement("td", car.engine.model),
-                                new XElement("td", car.engine.displacement),
-                                new XElement("td", car.engine.horsePower),
+                                new XElement("td", car.motor.model),
+                                new XElement("td", car.motor.displacement),
+                                new XElement("td", car.motor.horsePower),
                                 new XElement("td", car.year)
                             )
                         )
@@ -162,7 +163,6 @@ namespace Lab3
             Console.WriteLine("Result saved in CarsCollection2.xml");
 
         }
-
 
     }
 }

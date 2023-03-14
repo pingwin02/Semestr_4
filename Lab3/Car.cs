@@ -6,15 +6,16 @@ namespace Lab3
     public class Car
     {
         public string model;
-        public Engine engine;
+        [XmlElement(ElementName = "engine")]
+        public Engine motor;
         public int year;
 
         public Car() { }
 
-        public Car(string model, Engine engine, int year)
+        public Car(string model, Engine motor, int year)
         {
             this.model = model;
-            this.engine = engine;
+            this.motor = motor;
             this.year = year;
         }
     }
