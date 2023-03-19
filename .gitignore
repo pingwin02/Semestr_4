@@ -3,12 +3,28 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+
+# Unignore all dirs
+!*/
+
+# Linux out files
+*.out
+*.so
+*.o
+*.a
+
 # User-specific files
 *.rsuser
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
+*.pdf
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
