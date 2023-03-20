@@ -45,7 +45,34 @@ population = initial_population(len(items), population_size)
 for _ in range(generations):
     population_history.append(population)
 
-    # TODO: implement genetic algorithm
+    # 2a. Obliczenie prawdopodobieństwa wyboru osobnika
+    sum_fitness = 0
+    for j in range(len(population)):
+        sum_fitness += fitness(items, knapsack_max_capacity, population[j])
+
+    probability = []
+    for i in range(len(population)):
+        probability.append(fitness(items, knapsack_max_capacity, population[i]) / sum_fitness)
+
+    # 2b. Wybór rodziców
+    parents = []
+    for _ in range(n_selection):
+        parents.append(random.choices(population, probability)[0])
+
+    # 3. Tworzenie kolejnego pokolenia
+    children = []
+    for i in range(0, len(parents), 2):
+        cross_point = random.randint(0, len(items))
+        children.append(parents[i][:cross_point] + parents[i + 1][cross_point:])
+        children.append(parents[i + 1][:cross_point] + parents[i][cross_point:])
+
+    # 4. Mutacja
+    for i in range(len(children)):
+        random__ = random.randint(0, len(items) - 1)
+        children[i][random__] = not children[i][random__]
+
+    # 5. Wybór najlepszych
+    population = children + [population_best(items, knapsack_max_capacity, population)[0] for _ in range(n_elite)]
 
     best_individual, best_individual_fitness = population_best(items, knapsack_max_capacity, population)
     if best_individual_fitness > best_fitness:
