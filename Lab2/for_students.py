@@ -27,6 +27,39 @@ def population_best(items, knapsack_max_capacity, population):
             best_individual_fitness = individual_fitness
     return best_individual, best_individual_fitness
 
+def calculate_probability(items, knapsack_max_capacity, population):
+    # Calculate the sum of fitness scores
+    sum_fitness = sum([fitness(items, knapsack_max_capacity, p) for p in population])
+
+    # Calculate the probability of each individual being selected as a parent
+    probability = [fitness(items, knapsack_max_capacity, p) / sum_fitness for p in population]
+
+    return probability
+
+def select_parents(population, probability, n_selection):
+    # Select n_selection parents based on their probabilities
+    parents = random.choices(population, probability, k=n_selection)
+
+    return parents
+
+def crossover(parents, items):
+    # Perform crossover to create children
+    children = []
+    for i in range(0, len(parents), 2):
+        cross_point = random.randint(0, len(items))
+        child1 = parents[i][:cross_point] + parents[i + 1][cross_point:]
+        child2 = parents[i + 1][:cross_point] + parents[i][cross_point:]
+        children.extend([child1, child2])
+
+    return children
+
+def mutate(children, items):
+    # Mutate the children
+    for child in children:
+        random_index = random.randint(0, len(items) - 1)
+        child[random_index] = not child[random_index]
+
+    return children
 
 items, knapsack_max_capacity = get_big()
 print(items)
@@ -46,30 +79,16 @@ for _ in range(generations):
     population_history.append(population)
 
     # 2a. Obliczenie prawdopodobieństwa wyboru osobnika
-    sum_fitness = 0
-    for j in range(len(population)):
-        sum_fitness += fitness(items, knapsack_max_capacity, population[j])
-
-    probability = []
-    for i in range(len(population)):
-        probability.append(fitness(items, knapsack_max_capacity, population[i]) / sum_fitness)
+    probability = calculate_probability(items, knapsack_max_capacity, population)
 
     # 2b. Wybór rodziców
-    parents = []
-    for _ in range(n_selection):
-        parents.append(random.choices(population, probability)[0])
+    parents = select_parents(population, probability, n_selection)
 
     # 3. Tworzenie kolejnego pokolenia
-    children = []
-    for i in range(0, len(parents), 2):
-        cross_point = random.randint(0, len(items))
-        children.append(parents[i][:cross_point] + parents[i + 1][cross_point:])
-        children.append(parents[i + 1][:cross_point] + parents[i][cross_point:])
+    children = crossover(parents, items)
 
     # 4. Mutacja
-    for i in range(len(children)):
-        random__ = random.randint(0, len(items) - 1)
-        children[i][random__] = not children[i][random__]
+    children = mutate(children, items)
 
     # 5. Wybór najlepszych
     population = children + [population_best(items, knapsack_max_capacity, population)[0] for _ in range(n_elite)]
