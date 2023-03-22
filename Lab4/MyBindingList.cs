@@ -74,8 +74,6 @@ namespace Lab4
                     _isSorted = false;
                 }
 
-
-                //this.OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
             }
             else
             {
@@ -106,7 +104,7 @@ namespace Lab4
 
                     // If value is the search value, return the 
                     // index of the data item
-                    if ((string)key == value) return IndexOf(item);
+                    if (value.Contains((string)key)) return IndexOf(item);
                 }
 
             }

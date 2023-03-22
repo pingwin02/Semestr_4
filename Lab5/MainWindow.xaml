@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab5"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="400">
+        Title="MainWindow" Height="450" Width="450">
     <Grid>
         <TextBlock HorizontalAlignment="Left" Margin="14,86,0,0" TextWrapping="Wrap" Text="K" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="14,53,0,0" TextWrapping="Wrap" Text="N" VerticalAlignment="Top"/>
@@ -23,6 +23,12 @@
         <Button x:Name="Fib_GetButton" Content="GET" HorizontalAlignment="Left" Margin="18,217,0,0" VerticalAlignment="Top" Width="55" Click="Fib_GetButton_Click"/>
         <TextBox x:Name="Fib_ResultTextBox" HorizontalAlignment="Left" Margin="87,217,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="165" Height="20"/>
         <ProgressBar x:Name="Fib_ProgressBar" HorizontalAlignment="Left" Height="10" Margin="21,249,0,0" VerticalAlignment="Top" Width="169"/>
-
+        <TextBlock HorizontalAlignment="Left" Margin="281,160,0,0" TextWrapping="Wrap" Text="Kompresja" VerticalAlignment="Top"/>
+        <Button x:Name="Compress_Button" Content="Compress" HorizontalAlignment="Left" Margin="230,188,0,0" VerticalAlignment="Top" Width="70" Click="Compress_Button_Click"/>
+        <Button x:Name="Decompress_Button" Content="Decompress" HorizontalAlignment="Left" Margin="317,188,0,0" VerticalAlignment="Top" Width="70" Click="Decompress_Button_Click"/>
+        <Button x:Name="Generate_Button" Content="Generate file" HorizontalAlignment="Left" Margin="273,217,0,0" VerticalAlignment="Top" Click="Generate_Button_Click"/>
+        <TextBlock HorizontalAlignment="Left" Margin="20,285,0,0" TextWrapping="Wrap" Text="DNS" VerticalAlignment="Top"/>
+        <Button x:Name="DNS_resolve" Content="Resolve" HorizontalAlignment="Left" Margin="78,285,0,0" VerticalAlignment="Top" Width="54" Click="DNS_resolve_Click"/>
+        <TextBox x:Name="DNS_resultBox" HorizontalAlignment="Left" Margin="24,320,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="76" Width="201"/>
     </Grid>
 </Window>
