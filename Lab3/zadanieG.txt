@@ -1,0 +1,4 @@
+Jaka jest norma błędu rezydualnego dla każdego sposobu rozwiązania równania macierzowego?
+
+Czy metody iteracyjne zbiegaja sie?
+Nie, nigdy się nie kończą.

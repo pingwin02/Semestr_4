@@ -1,0 +1,7 @@
+a) Która z trzech zbadanych metod okazała sie najszybsza?
+
+Najszybsza okazała się trzecia metoda Gaussa-Seidla. Przy dużych wartościach N potrzebowała mniej czasu do ukończenia niż metoda Jacobiego. Natomiast w porównaniu do metody standardowej, czas był około 100 razy krótszy.
+
+b) Która metoda iteracyjna potrzebuje mniejszej liczby iteracji, zeby zbiec sie do prawidłowego wyniku?
+
+Metoda Gaussa-Seidla potrzebowała od 100 do 120 iteracji, zaś metoda Jacobiego prawie dwa razy więcej od 200 do 220 iteracji.
