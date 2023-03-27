@@ -14,9 +14,6 @@
 
 # Linux out files
 *.out
-*.so
-*.o
-*.a
 
 # User-specific files
 *.rsuser
