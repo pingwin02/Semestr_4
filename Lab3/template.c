@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <semaphore.h>
+#include <fcntl.h>
 #include "pqueue.h"
 
 char *filename = "queue.dat";
@@ -53,8 +54,6 @@ void producer(pid_t childPid)
 	sem_wait(sem);
 	pqueue *qu = NULL;
 	qunserialize(&qu, sizeof(item), filename);
-	printf("\nUWAGA!\n");
-	qlist(qu, print_item_prod);
 	int size = 0;
 	pqueue *tmp = qu;
 	while (tmp != NULL)
@@ -65,7 +64,6 @@ void producer(pid_t childPid)
 	if (size > 4)
 	{
 		printf("Producer is waiting for consumer\n");
-		sleep(1);
 	}
 	else
 	{
@@ -76,6 +74,7 @@ void producer(pid_t childPid)
 		qserialize(qu, sizeof(item), filename);
 	}
 	sem_post(sem);
+	sleep(1);
 }
 
 void consumer()
@@ -83,49 +82,29 @@ void consumer()
 	sem_wait(sem);
 	pqueue *qu = NULL;
 	qunserialize(&qu, sizeof(item), filename);
-	qlist(qu, print_item_con);
 	pqueue *node = qpop(&qu);
 	qserialize(qu, sizeof(item), filename);
 	sem_post(sem);
-
+	sleep(1);
 	if (node != NULL)
 	{
 		item *it = node->data;
 		printf("Consumer is consuming an item %d\n", it->id);
+		qlist(qu, print_item_con);
 		consume(it);
 		free(node);
 	}
 	else
 	{
 		printf("Consumer is waiting for an item\n");
-		sleep(1);
 	}
 }
 
-int main1()
+void my_handler(int s)
 {
-	pqueue *qu = NULL;
-
-	item *it1 = produce();
-	qinsert(&qu, it1, itemId);
-
-	it1 = produce();
-	qinsert(&qu, it1, itemId);
-
-	it1 = produce();
-	qinsert(&qu, it1, itemId);
-
-	qlist(qu, print_item_con);
-
-	pqueue *node = qpop(&qu);
-	item *data = node->data;
-	printf("\n%d\n", data->id);
-	qserialize(qu, sizeof(item), filename);
-	qlist(qu, print_item_con);
-
-	qunserialize(&qu, sizeof(item), filename);
-
-	qlist(qu, print_item_con);
+	sem_close(sem);
+	sem_unlink("mysemaphore");
+	exit(1);
 }
 
 int main(int argc, char **argv)
@@ -134,16 +113,14 @@ int main(int argc, char **argv)
 	pqueue *qu = NULL;
 	/* watch -n 1 ps -l --forest */
 
-	sem_t temp;
+	// setbuf(stdout, NULL);
 
-	sem_init(&temp, 1, 1);
-
-	sem = &temp;
+	sem = sem_open("mysemaphore", O_CREAT, 0600, 1);
 
 	/* create empty queue */
 	qserialize(qu, sizeof(item), filename);
 
-	// setbuf(stdout, NULL);
+	signal(SIGINT, my_handler);
 
 	pid = fork();
 	if (pid == 0)
@@ -160,8 +137,6 @@ int main(int argc, char **argv)
 			producer(pid);
 		}
 	}
-
-	sem_destroy(sem);
 
 	return 0;
 }
