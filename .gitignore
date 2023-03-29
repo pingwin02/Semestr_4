@@ -2,3 +2,5 @@
 *.png
 html
 .idea
+__pycache__
+*.pdf

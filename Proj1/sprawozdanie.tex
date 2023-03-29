@@ -1,0 +1,142 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[polish]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+
+\usepackage[a4paper, margin=2.54cm]{geometry}
+
+
+\title{Sprawozdanie - Projekt 1\\Wskaźnik giełdowy MACD}
+\author{Damian Jankowski s188597}
+\date{06 kwietnia 2023}
+
+\begin{document}
+
+    \maketitle
+
+    \section{Wstęp}
+    \subsection{Czym jest wskaźnik MACD?}
+    Wskaźnik \textbf{MACD} (ang. \textit{Moving Average Convergence Divergence}) 
+    jest jednym z najpopularniejszych wskaźników giełdowych, badającym
+    zależności pomiędzy krótkimi i długimi średnimi ruchomymi.
+    Korzystają z niego zarówno inwestorzy indywidualni, 
+    jak i instytucjonalni, a także banki i inwestycyjne domy maklerskie.
+
+    \subsection{Jak wyznaczać MACD?}
+    Wskaźnik kreślony jest za pomocą dwóch wykresów:
+    \begin{itemize}
+        \item \textbf{MACD}
+        \item \textbf{SIGNAL}
+    \end{itemize}
+
+    Obie z nich wykorzystują tzw. wykładniczą średnią ruchomą/kroczącą
+    \textbf{EMA} (ang. \textit{Exponential Moving Average}), którą da się opisać
+    następującą formułą:
+    \begin{equation}
+        EMA_{N} = \frac{p_{0} + (1-\alpha)p_{1} + (1-\alpha)^2p_{2} + 
+        (1-\alpha)^3p_{3} + ... + (1-\alpha)^Np_{N} }
+        {1 + (1-\alpha) + (1-\alpha)^2 + (1-\alpha)^3 + ... + (1-\alpha)^N}
+    \end{equation}
+    gdzie:
+    \begin{itemize}
+        \item $EMA_{N}$ - wykładnicza średnia ruchoma z okresu $N$
+        \item $p_{0}$ - aktualna cena akcji
+        \item $p_{1}$ - cena akcji z poprzedniego okresu
+        \item $p_{N}$ - cena akcji z $N$-tego okresu
+        \item $\alpha = \frac{2}{N+1}$ - współczynnik wykładniczy
+        \item $N$ - liczba okresów wykładniczej średniej ruchomej
+    \end{itemize}
+
+    Wartość \textbf{MACD} jest wyliczana na podstawie następującej formuły:
+    \begin{equation}
+        MACD = EMA_{12} - EMA_{26}
+    \end{equation}
+
+    Natomiast \textbf{SIGNAL} to wykładnicza średnia ruchoma z okresu 9, policzona z \textbf{MACD}:
+    \begin{equation}
+        SIGNAL = EMA_{9}(MACD)
+    \end{equation}
+
+    \subsection{Jak interpretować MACD?}
+    Przyjęto następujące zasady interpretacji:
+    \begin{enumerate}
+        \item Jeśli \textbf{MACD} przekroczy \textbf{SIGNAL} z dołu oznacza, że akcje powinny być kupowane.
+        \item Jeśli \textbf{MACD} przekroczy \textbf{SIGNAL} z góry oznacza, że akcje powinny być sprzedawane.
+    \end{enumerate}
+
+    \section{Analiza wskaźnika MACD}
+    \subsection{Cel analizy}
+    Celem analizy było sprawdzenie, czy wskaźnik MACD jest dobrym wskaźnikiem do inwestowania w akcje
+    oraz czy jest on w stanie przewidywać zmiany cen akcji w zależności od sytuacji na rynku.
+    \subsection{Dane wejściowe}
+    Dane wejściowe zostały pobrane z serwisu \textbf{Yahoo! Finance API} w formacie \textit{.csv} i obejmują
+    ceny akcji firmy \textbf{CD Projekt Red} od 2019-01-16 do 2022-11-30.
+    Był to dość ciężki okres, gdyż w tym czasie wydano grę
+    \textbf{Cyberpunk 2077}, która posiadała wielkie problemy z optymalizacją podczas premiery,
+    co znacząco wpłynęło na rynek.
+
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{wykres.png}
+        \centering
+        \caption{Wykres ceny akcji firmy CD Projekt Red}
+    \end{figure}
+
+    Dla wybranego przedziału czasu istnieje dokładnie 1000 próbek.
+
+    \subsection{Implementacja}
+    W celu implementacji wskaźnika został napisany skrypt w języku \textit{Python}.
+    Znajduje się on w pliku \textit{main.py} oraz \textit{functions.py}. Do tworzenia wykresów
+    został użyty moduł \textit{matplotlib}, natomiast do wczytywania danych z API --- moduł \textit{pandas}.
+    \subsection{Symulacja}
+    W celu sprawdzenia poprawności działania wskaźnika została przeprowadzona symulacja.
+    Polegała ona na kupowaniu i sprzedawaniu akcji w momencie, gdy \textbf{MACD} przekroczył \textbf{SIGNAL}.
+    Zaczynało się z tysiącem złotych oraz zerową ilością akcji.
+    Zgodnie z przyjętymi założeniami w momencie, gdy \textbf{MACD} przekroczył \textbf{SIGNAL} z dołu, kupowano maksymalnie możliwą ilość akcji 
+    za ówczesną cenę.
+    Natomiast, gdy \textbf{MACD} przekroczył \textbf{SIGNAL} z góry, sprzedawano wszystkie akcje.
+    
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{macdsignal.png}
+        \centering
+        \caption{Wykres \textbf{MACD} oraz \textbf{SIGNAL} dla przyjętego okresu czasu}
+    \end{figure}
+
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{simulation.png}
+        \centering
+        \caption{Wykres ilości gotówki w trakcie symulacji}
+    \end{figure}
+
+    W trakcie symulacji algorytm drukował informacje o aktualnie podejmowanej decyzji.
+    Dla wybranej polityki inwestycyjnej, po zakończeniu symulacji, algorytm zanotował następujący zysk:
+    \begin{verbatim}
+        ...
+        Dzień:  2022-11-02 00:00:00 Kupiłem akcje za 1089.760008 PLN.
+        Dzień:  2022-11-21 00:00:00 Sprzedałem akcje za 1114.239992 PLN
+        Zysk: 151.0900469999999 PLN. Pozostało akcji: 0 sztuk.
+        Sprzedaję resztę akcji za 0.0 PLN.
+        Zysk całkowity: 151.0900469999999 PLN.
+    \end{verbatim}
+
+    
+    \subsection{Wnioski}
+    Gdy przyjrzeć się fragmentowi wykresu \textbf{MACD} oraz \textbf{SIGNAL}, można zauważyć, że
+    algorytm podejmował dobre decyzje. Natomiast patrząc na cały okres czasu, zysk mógłby być
+    znacznie większy, gdyby algorytm nie podejmował decyzji zbyt późno.
+
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{macdsignal_zoom.png}
+        \centering
+        \caption{Fragment wykresu \textbf{MACD} oraz \textbf{SIGNAL}}{ wraz z zaznaczonymi punktami kupna i sprzedaży}
+    \end{figure}
+
+    \subsection{Implementacja innego wskaźnika}
+    W celu porównania wskaźnika MACD z innym wskaźnikiem, został zaimplementowany wskaźnik
+
+    \section{Podsumowanie}
+    Tutaj pojawi się podsumowanie.
+
+\end{document}

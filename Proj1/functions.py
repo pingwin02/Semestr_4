@@ -32,21 +32,33 @@ def plotSIGNALMACD(data):
     macd = [0.0] * 26 + macd
     signal = [0.0] * 35 + signal
 
-    plt.scatter(0, 0, color='red', label='Kupno')
-    plt.scatter(0, 0, color='green', label='Sprzedaż')
+    plt.xlabel('nr próbki')
+    plt.ylabel('Wartość')
+    plt.title('MACD i SIGNAL', fontweight='bold')
+    plt.legend()
+    plt.savefig('macdsignal.png')
 
-    for i in range(35, len(data)):
+    plt.figure(figsize=(10, 5))
+
+    plt.plot(range(460, 580), macd[460:580], color='blue', label='MACD')
+    plt.plot(range(460, 580), signal[460:580], color='red', label='SIGNAL')
+
+    plt.scatter(460, -10, color='red', label='Kupno')
+    plt.scatter(460, -10, color='green', label='Sprzedaż')
+
+    for i in range(460, 580):
         if macd[i] > signal[i] and macd[i - 1] < signal[i - 1]:
             plt.scatter(i, macd[i], color='red')
 
         elif macd[i] < signal[i] and macd[i - 1] > signal[i - 1]:
             plt.scatter(i, macd[i], color='green')
 
+    plt.grid(color='gray', linestyle='--')
     plt.xlabel('nr próbki')
     plt.ylabel('Wartość')
     plt.title('MACD i SIGNAL', fontweight='bold')
     plt.legend()
-    plt.savefig('macdsignal.png')
+    plt.savefig('macdsignal_zoom.png')
 
     return macd, signal
 
@@ -83,12 +95,9 @@ def simulateSimple(dataset, macd, signal):
     print(f'Zysk całkowity: {cash - 1000} PLN.')
 
     plt.figure(figsize=(10, 5))
-    plt.plot(cash_history, color='blue', label='Pieniądze')
-    plt.plot(actions_history, color='red', label='Akcje')
+    plt.plot(range(34, len(data)), cash_history, color='blue')
     plt.grid(color='gray', linestyle='--')
     plt.xlabel('nr próbki')
-    plt.ylabel('Ilość pieniędzy lub akcji')
+    plt.ylabel('Ilość pieniędzy (PLN)')
     plt.title('Symulacja', fontweight='bold')
-    plt.legend()
     plt.savefig('simulation.png')
-
