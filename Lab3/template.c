@@ -4,13 +4,13 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <semaphore.h>
-#include <fcntl.h>
+#include <pthread.h>
 #include "pqueue.h"
 
 char *filename = "queue.dat";
 
 int itemId = 0;
-sem_t *sem;
+sem_t sem;
 
 typedef struct item item;
 struct item
@@ -51,60 +51,60 @@ void print_item_prod(void *data)
 
 void producer(pid_t childPid)
 {
-	sem_wait(sem);
-	pqueue *qu = NULL;
-	qunserialize(&qu, sizeof(item), filename);
-	int size = 0;
-	pqueue *tmp = qu;
-	while (tmp != NULL)
+	while (1)
 	{
-		size++;
-		tmp = tmp->next;
+		sem_wait(&sem);
+		pqueue *qu = NULL;
+		qunserialize(&qu, sizeof(item), filename);
+		int size = 0;
+		pqueue *tmp = qu;
+		while (tmp != NULL)
+		{
+			size++;
+			tmp = tmp->next;
+		}
+		if (size > 4)
+		{
+			printf("Producer is waiting for consumer\n");
+		}
+		else
+		{
+			item *it = produce();
+			printf("Producer is producing an item %d\n", it->id);
+			qinsert(&qu, it, it->id);
+			qlist(qu, print_item_prod);
+			qserialize(qu, sizeof(item), filename);
+		}
+		sem_post(&sem);
+		sleep(1);
 	}
-	if (size > 4)
-	{
-		printf("Producer is waiting for consumer\n");
-	}
-	else
-	{
-		item *it = produce();
-		printf("Producer is producing an item %d\n", it->id);
-		qinsert(&qu, it, it->id);
-		qlist(qu, print_item_prod);
-		qserialize(qu, sizeof(item), filename);
-	}
-	sem_post(sem);
-	sleep(1);
 }
 
 void consumer()
 {
-	sem_wait(sem);
-	pqueue *qu = NULL;
-	qunserialize(&qu, sizeof(item), filename);
-	pqueue *node = qpop(&qu);
-	qserialize(qu, sizeof(item), filename);
-	sem_post(sem);
-	sleep(1);
-	if (node != NULL)
+	while (1)
 	{
-		item *it = node->data;
-		printf("Consumer is consuming an item %d\n", it->id);
-		qlist(qu, print_item_con);
-		consume(it);
-		free(node);
+		sem_wait(&sem);
+		pqueue *qu = NULL;
+		qunserialize(&qu, sizeof(item), filename);
+		pqueue *node = qpop(&qu);
+		qserialize(qu, sizeof(item), filename);
+		sem_post(&sem);
+		sleep(1);
+		if (node != NULL)
+		{
+			item *it = node->data;
+			printf("Consumer is consuming an item %d\n", it->id);
+			qlist(qu, print_item_con);
+			consume(it);
+			free(node);
+		}
+		else
+		{
+			printf("Consumer is waiting for an item\n");
+		}
+		sleep(1);
 	}
-	else
-	{
-		printf("Consumer is waiting for an item\n");
-	}
-}
-
-void my_handler(int s)
-{
-	sem_close(sem);
-	sem_unlink("mysemaphore");
-	exit(1);
 }
 
 int main(int argc, char **argv)
@@ -113,30 +113,20 @@ int main(int argc, char **argv)
 	pqueue *qu = NULL;
 	/* watch -n 1 ps -l --forest */
 
-	// setbuf(stdout, NULL);
-
-	sem = sem_open("mysemaphore", O_CREAT, 0600, 1);
+	sem_init(&sem, 0, 1);
 
 	/* create empty queue */
 	qserialize(qu, sizeof(item), filename);
 
-	signal(SIGINT, my_handler);
+	pthread_t thread1, thread2;
 
-	pid = fork();
-	if (pid == 0)
-	{
-		while (1)
-		{
-			consumer();
-		}
-	}
-	else
-	{
-		while (1)
-		{
-			producer(pid);
-		}
-	}
+	pthread_create(&thread1, NULL, (void *)producer, NULL);
+	pthread_create(&thread2, NULL, (void *)consumer, NULL);
+
+	pthread_join(thread1, NULL);
+	pthread_join(thread2, NULL);
+
+	sem_destroy(&sem);
 
 	return 0;
 }
