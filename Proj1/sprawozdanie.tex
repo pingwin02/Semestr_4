@@ -19,13 +19,15 @@
 
     \section{Wstęp}
     \subsection{Czym jest wskaźnik MACD?}
+
     Wskaźnik \textbf{MACD} (ang. \textit{Moving Average Convergence Divergence}) 
-    jest jednym z najpopularniejszych wskaźników giełdowych, badającym
+    jest jednym z najpopularniejszych wskaźników analizy technicznej, badającym
     zależności pomiędzy krótkimi i długimi średnimi ruchomymi.
     Korzystają z niego zarówno inwestorzy indywidualni, 
-    jak i instytucjonalni, a także banki i inwestycyjne domy maklerskie.
+    jak i instytucjonalni, a także banki i inwestycyjne domy maklerskie. \cite{macd}
 
     \subsection{Jak wyznaczać MACD?}
+
     Wskaźnik kreślony jest za pomocą dwóch wykresów:
     \begin{itemize}
         \item \textbf{MACD}
@@ -34,7 +36,7 @@
 
     Obie z nich wykorzystują tzw. wykładniczą średnią ruchomą/kroczącą
     \textbf{EMA} (ang. \textit{Exponential Moving Average}), którą da się opisać
-    następującą formułą:
+    następującą formułą \cite{ema}:
     \begin{equation}
         EMA_{N} = \frac{p_{0} + (1-\alpha)p_{1} + (1-\alpha)^2p_{2} + 
         (1-\alpha)^3p_{3} + ... + (1-\alpha)^Np_{N} }
@@ -46,7 +48,7 @@
         \item $p_{0}$ - aktualna cena akcji
         \item $p_{1}$ - cena akcji z poprzedniego okresu
         \item $p_{N}$ - cena akcji z $N$-tego okresu
-        \item $\alpha = \frac{2}{N+1}$ - współczynnik wykładniczy
+        \item $\alpha = \frac{2}{N+1}$ - procent wykładniczy
         \item $N$ - liczba okresów wykładniczej średniej ruchomej
     \end{itemize}
 
@@ -60,7 +62,10 @@
         SIGNAL = EMA_{9}(MACD)
     \end{equation}
 
+    Wynika więc z tego, że wykres \textbf{MACD} zaczyna się od 26. próbki, a \textbf{SIGNAL} od 35. próbki.
+
     \subsection{Jak interpretować MACD?}
+
     Przyjęto następujące zasady interpretacji:
     \begin{enumerate}
         \item Jeśli \textbf{MACD} przekroczy \textbf{SIGNAL} z dołu oznacza, że akcje powinny być kupowane.
@@ -69,10 +74,12 @@
 
     \section{Analiza wskaźnika MACD}
     \subsection{Cel analizy}
+
     Celem analizy było sprawdzenie, czy wskaźnik MACD jest dobrym wskaźnikiem do inwestowania w akcje
     oraz czy jest on w stanie przewidywać zmiany cen akcji w zależności od sytuacji na rynku.
     \subsection{Dane wejściowe}
-    Dane wejściowe zostały pobrane z serwisu \textbf{Yahoo! Finance API} w formacie \textit{.csv} i obejmują
+
+    Dane wejściowe pobrałem z serwisu \textbf{Yahoo! Finance API} \cite{api} w formacie \textit{.csv} i obejmują
     ceny akcji firmy \textbf{CD Projekt Red} od 2019-01-16 do 2022-11-30.
     Był to dość ciężki okres, gdyż w tym czasie wydano grę
     \textbf{Cyberpunk 2077}, która posiadała wielkie problemy z optymalizacją podczas premiery,
@@ -87,13 +94,21 @@
     Dla wybranego przedziału czasu istnieje dokładnie 1000 próbek.
 
     \subsection{Implementacja}
-    W celu implementacji wskaźnika został napisany skrypt w języku \textit{Python}.
+
+    W celu implementacji wskaźnika napisałem skrypt w języku \textit{Python}.
     Znajduje się on w pliku \textit{main.py} oraz \textit{functions.py}. Do tworzenia wykresów
-    został użyty moduł \textit{matplotlib}, natomiast do wczytywania danych z API --- moduł \textit{pandas}.
+    użyłem modułu \textit{matplotlib}, natomiast do wczytywania danych z API --- modułu \textit{pandas}.
     \subsection{Symulacja}
-    W celu sprawdzenia poprawności działania wskaźnika została przeprowadzona symulacja.
-    Polegała ona na kupowaniu i sprzedawaniu akcji w momencie, gdy \textbf{MACD} przekroczył \textbf{SIGNAL}.
-    Zaczynało się z tysiącem złotych oraz zerową ilością akcji.
+    W celu sprawdzenia poprawności działania wskaźnika przeprowadziłem dwie symulacje:
+    \begin{enumerate}
+        \item \textbf{Prosta} - kupowanie i sprzedawanie akcji za każdym razem, gdy wykres \textbf{MACD} przecina \\ \textbf{SIGNAL}.
+        \item \textbf{Złożona} - wykorzystanie dodatkowo wskaźnika \textbf{\%R Williamsa} (ang. \textit{Williams \%R}).
+    \end{enumerate}
+   
+    Obie symulacje zostały przeprowadzone na tych samych danych wejściowych. Kapitał początkowy wynosił 1000 złotych. 
+
+    \subsubsection{Symulacja prosta}
+
     Zgodnie z przyjętymi założeniami w momencie, gdy \textbf{MACD} przekroczył \textbf{SIGNAL} z dołu, kupowano maksymalnie możliwą ilość akcji 
     za ówczesną cenę.
     Natomiast, gdy \textbf{MACD} przekroczył \textbf{SIGNAL} z góry, sprzedawano wszystkie akcje.
@@ -101,42 +116,122 @@
     \begin{figure}[H]
         \includegraphics[width=\textwidth]{macdsignal.png}
         \centering
-        \caption{Wykres \textbf{MACD} oraz \textbf{SIGNAL} dla przyjętego okresu czasu}
+        \caption{Wykres \textbf{MACD} oraz \textbf{SIGNAL} dla prostej symulacji}
     \end{figure}
 
     \begin{figure}[H]
-        \includegraphics[width=\textwidth]{simulation.png}
+        \includegraphics[width=\textwidth]{simulation_simple.png}
         \centering
-        \caption{Wykres ilości gotówki w trakcie symulacji}
+        \caption{Ilość gotówki w trakcie prostej symulacji}
     \end{figure}
 
     W trakcie symulacji algorytm drukował informacje o aktualnie podejmowanej decyzji.
     Dla wybranej polityki inwestycyjnej, po zakończeniu symulacji, algorytm zanotował następujący zysk:
     \begin{verbatim}
         ...
-        Dzień:  2022-11-02 00:00:00 Kupiłem akcje za 1089.760008 PLN.
-        Dzień:  2022-11-21 00:00:00 Sprzedałem akcje za 1114.239992 PLN
+        Dzień 980:  Kupiłem 8 akcje za 1089.760008 PLN.
+        Dzień 992:  Sprzedałem 8 akcje za 1114.239992 PLN
         Zysk: 151.0900469999999 PLN. Pozostało akcji: 0 sztuk.
         Sprzedaję resztę akcji za 0.0 PLN.
         Zysk całkowity: 151.0900469999999 PLN.
     \end{verbatim}
 
-    
+    \subsubsection{Symulacja złożona}
+
+    W celu zwiększenia skuteczności algorytmu, zastosowałem dodatkowo wskaźnik \textbf{\%R Williamsa} \cite{wiki1}\cite{williams}.
+
+    Używany w analizie technicznej wskaźnik \textbf{\%R} (ang. \textit{Williams \%R})
+    pokazuje położenie aktualnej ceny względem maksymalnej i minimalnej ceny w określonym okresie czasu.
+
+    \begin{equation}
+        \%R = \frac{C - H}{H - L} \cdot 100
+    \end{equation}
+    gdzie:
+    \begin{itemize}
+        \item $H$ - maksymalna cena w określonym $n$ okresie czasu
+        \item $L$ - minimalna cena w określonym $n$ okresie czasu
+        \item $C$ - aktualna cena
+    \end{itemize}
+
+    Wskaźnik ten przyjmuje wartości od -100 do 0.
+    Wartości poniżej -80 oznaczają sprzedawanie akcji,
+    natomiast wartości powyżej -20 oznaczają, że powinno się kupować akcje.
+
+    Do symulacji przyjąłem wartość $n = 10$.
+
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{williams.png}
+        \centering
+        \caption{Wykres \textbf{\%R Williamsa} dla złożonej symulacji}
+    \end{figure}
+
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{simulation_advanced.png}
+        \centering
+        \caption{Ilość gotówki w trakcie złożonej symulacji}
+    \end{figure}
+
+Fragment wydruku z symulacji złożonej:
+    \begin{verbatim}
+        ...
+        Dzień 804:  Sprzedałem 9 akcje za 1521.0 PLN
+        Dzień 943:  Kupiłem 17 akcje za 1492.6000510000001 PLN.
+        Zysk: -967.8000589999999 PLN. Pozostało akcji: 17 sztuk.
+        Sprzedaję resztę akcji za 2226.659932 PLN.
+        Zysk całkowity: 1258.8598730000003 PLN.
+    \end{verbatim}
+
     \subsection{Wnioski}
+
     Gdy przyjrzeć się fragmentowi wykresu \textbf{MACD} oraz \textbf{SIGNAL}, można zauważyć, że
-    algorytm podejmował dobre decyzje. Natomiast patrząc na cały okres czasu, zysk mógłby być
-    znacznie większy, gdyby algorytm nie podejmował decyzji zbyt późno.
+    algorytm podejmował dobre decyzje, jednak w pewnych momentach nie był w stanie przewidzieć
+    zmian cen akcji. W szczególności w momencie wydania gry \textbf{Cyberpunk 2077}.
 
     \begin{figure}[H]
         \includegraphics[width=\textwidth]{macdsignal_zoom.png}
         \centering
-        \caption{Fragment wykresu \textbf{MACD} oraz \textbf{SIGNAL}}{ wraz z zaznaczonymi punktami kupna i sprzedaży}
+        \caption{Fragment wykresu \textbf{MACD} oraz \textbf{SIGNAL}}{ wraz z zaznaczonymi punktami kupna i sprzedaży
+        dla symulacji prostej}
+        \label{fig:macdsignal_zoom}
     \end{figure}
 
-    \subsection{Implementacja innego wskaźnika}
-    W celu porównania wskaźnika MACD z innym wskaźnikiem, został zaimplementowany wskaźnik
+    Fragment wydruku algorytmu dotyczący powyższego wykresu:
+    \begin{verbatim}
+        ...
+        Dzień 449:  Sprzedałem 3 akcje za 1124.399964 PLN
+        Dzień 469:  Kupiłem 4 akcje za 1460.0 PLN.
+        Dzień 485:  Sprzedałem 4 akcje za 1456.0 PLN
+        Dzień 488:  Kupiłem 3 akcje za 1168.5 PLN.
+        Dzień 496:  Sprzedałem 3 akcje za 1086.0 PLN
+        Dzień 509:  Kupiłem 5 akcje za 1402.5 PLN.
+        Dzień 537:  Sprzedałem 5 akcje za 1466.9999699999998 PLN
+        Dzień 562:  Kupiłem 6 akcje za 1359.0 PLN.
+        Dzień 575:  Sprzedałem 6 akcje za 1143.0 PLN
+        ...
+    \end{verbatim}
+
+    Prosta symulacja oparta tylko o \textbf{MACD} zwróciła zysk w wysokości 151 PLN.
+    Patrząc na wykres \textbf{MACD} oraz \textbf{SIGNAL} można zauważyć, że algorytm
+    podejmował wiele decyzji o kupnie/sprzedaży. Dokładnie to widać na Rysunku \ref{fig:macdsignal_zoom}.
+
+    Natomiast złożona symulacja, która uwzględniała również \textbf{\%R Williamsa} 
+    zwróciła zysk w wysokości 1258 PLN. Dodanie kolejnych warunków spowodowało, że
+    algorytm podejmował mniej, ale za to bardziej trafnych decyzji.
 
     \section{Podsumowanie}
-    Tutaj pojawi się podsumowanie.
+    Wskaźnik \textbf{MACD} dla wybranych przeze mnie akcji wykazał się dobrą skutecznością.
+
+    \renewcommand{\refname}{Źródła}
+    \begin{thebibliography}{100}
+    \bibitem{api} Dane wejściowe --- \url{https://finance.yahoo.com/}
+    \bibitem{wiki1} Wskaźniki analizy technicznej --- \url{https://pl.wikipedia.org/wiki/Wska%C5%BAniki_analizy_technicznej}
+    \bibitem{macd} MACD --- \url{https://pl.wikipedia.org/wiki/MACD}
+    \bibitem{ema} Średnia ruchoma EMA --- \url{https://pl.wikipedia.org/wiki/%C5%9Arednia_ruchoma}
+    \bibitem{williams} \%R Williams --- \url{https://pl.wikipedia.org/wiki/%25R_Williamsa}
+    \bibitem{} Investopedia --- \url{https://www.investopedia.com/terms/m/macd.asp}
+
+    \end{thebibliography}
+
+
 
 \end{document}

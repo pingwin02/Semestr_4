@@ -1,4 +1,3 @@
-import pandas as pd
 from matplotlib import pyplot as plt
 
 
@@ -32,7 +31,7 @@ def plotSIGNALMACD(data):
     macd = [0.0] * 26 + macd
     signal = [0.0] * 35 + signal
 
-    plt.xlabel('nr próbki')
+    plt.xlabel('numer dnia')
     plt.ylabel('Wartość')
     plt.title('MACD i SIGNAL', fontweight='bold')
     plt.legend()
@@ -54,7 +53,7 @@ def plotSIGNALMACD(data):
             plt.scatter(i, macd[i], color='green')
 
     plt.grid(color='gray', linestyle='--')
-    plt.xlabel('nr próbki')
+    plt.xlabel('numer dnia')
     plt.ylabel('Wartość')
     plt.title('MACD i SIGNAL', fontweight='bold')
     plt.legend()
@@ -63,41 +62,99 @@ def plotSIGNALMACD(data):
     return macd, signal
 
 
+def plotWilliams(data, period=10):
+    williams = []
+
+    for i in range(period, len(data)):
+        _max = data[i - period: i + 1].max()
+        _min = data[i - period: i + 1].min()
+
+        williams.append((data[i] - _max) / (_max - _min) * 100)
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(range(period, len(data)), williams, color='orange', label='Williams')
+    plt.grid(color='gray', linestyle='--')
+
+    plt.axhline(y=-80, color='green', linestyle='--', label='Sprzedaż')
+    plt.axhline(y=-20, color='red', linestyle='--', label='Kupno')
+
+    plt.xlabel('numer dnia')
+    plt.ylabel('Wartość')
+    plt.title('Wskaźnik %R Williamsa', fontweight='bold')
+    plt.legend()
+    plt.savefig('williams.png')
+
+    williams = [0.0] * period + williams
+
+    return williams
+
+
+def endSimulation(cash, actions, data, cash_history):
+    print(f'Zysk: {cash - 1000} PLN. Pozostało akcji: {actions} sztuk.')
+    print(f'Sprzedaję resztę akcji za {actions * data[len(data) - 1]} PLN.')
+    cash += actions * data[len(data) - 1]
+    cash_history.append(cash)
+    print(f'Zysk całkowity: {cash - 1000} PLN.')
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(range(33, len(data)), cash_history, color='blue')
+    plt.grid(color='gray', linestyle='--')
+    plt.axhline(y=1000, color='red', linestyle='--')
+    plt.xlabel('numer dnia')
+    plt.ylabel('Ilość pieniędzy (PLN)')
+
+
 def simulateSimple(dataset, macd, signal):
     cash = 1000
     actions = 0
-    cash_history = []
-    actions_history = []
-    cash_history.append(cash)
-    actions_history.append(actions)
+    cash_history = [cash]
 
     data = dataset['Close']
 
     print(f'Początkowa ilość pieniędzy: {cash} PLN')
 
     for i in range(35, len(data)):
-        if macd[i] > signal[i] and macd[i - 1] < signal[i - 1] and cash > 0:
-            actions = int(cash / data[i])
-            cash -= actions * data[i]
-            print("Dzień: ", dataset.index[i], end=' ')
-            print(f'Kupiłem akcje za {actions * data[i]} PLN.')
-        elif macd[i] < signal[i] and macd[i - 1] > signal[i - 1] and actions > 0:
-            print("Dzień: ", dataset.index[i], end=' ')
-            print(f'Sprzedałem akcje za {actions * data[i]} PLN')
+        if macd[i] > signal[i] and macd[i - 1] <= signal[i - 1] and cash > data[i]:
+            _actions = int(cash / data[i])
+            cash -= _actions * data[i]
+            print(f"Dzień {i}: ", end=' ')
+            print(f'Kupiłem {_actions} akcje za {_actions * data[i]} PLN.')
+            actions += _actions
+        elif macd[i] < signal[i] and macd[i - 1] >= signal[i - 1] and actions > 0:
+            print(f"Dzień {i}: ", end=' ')
+            print(f'Sprzedałem {actions} akcje za {actions * data[i]} PLN')
             cash += actions * data[i]
             actions = 0
         cash_history.append(cash)
-        actions_history.append(actions)
 
-    print(f'Zysk: {cash - 1000} PLN. Pozostało akcji: {actions} sztuk.')
-    print(f'Sprzedaję resztę akcji za {actions * data[len(data) - 1]} PLN.')
-    cash += actions * data[len(data) - 1]
-    print(f'Zysk całkowity: {cash - 1000} PLN.')
+    endSimulation(cash, actions, data, cash_history)
+    plt.title('Gotówka - symulacja prosta', fontweight='bold')
+    plt.savefig('simulation_simple.png')
 
-    plt.figure(figsize=(10, 5))
-    plt.plot(range(34, len(data)), cash_history, color='blue')
-    plt.grid(color='gray', linestyle='--')
-    plt.xlabel('nr próbki')
-    plt.ylabel('Ilość pieniędzy (PLN)')
-    plt.title('Symulacja', fontweight='bold')
-    plt.savefig('simulation.png')
+
+def simulateAdvanced(dataset, macd, signal, williams):
+    cash = 1000
+    actions = 0
+    cash_history = [cash]
+
+    data = dataset['Close']
+
+    print(f'Początkowa ilość pieniędzy: {cash} PLN')
+
+    for i in range(35, len(data)):
+        if macd[i] > signal[i] and macd[i - 1] <= signal[i - 1] and williams[i] > -20 and cash > data[i]:
+            _actions = int(cash / data[i])
+            cash -= _actions * data[i]
+            print(f"Dzień {i}: ", end=' ')
+            print(f'Kupiłem {_actions} akcje za {_actions * data[i]} PLN.')
+            actions += _actions
+        elif macd[i] < signal[i] and macd[i - 1] >= signal[i - 1] and williams[i] < -80 and actions > 0:
+            print(f"Dzień {i}: ", end=' ')
+            print(f'Sprzedałem {actions} akcje za {actions * data[i]} PLN')
+            cash += actions * data[i]
+            actions = 0
+        cash_history.append(cash)
+
+    endSimulation(cash, actions, data, cash_history)
+    plt.title('Gotówka - symulacja złożona', fontweight='bold')
+    plt.savefig('simulation_advanced.png')
