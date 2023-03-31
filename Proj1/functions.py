@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import pandas as pd
 
 
 def calcEMA(data, current, period):
@@ -38,6 +39,17 @@ def plotSIGNALMACD(data):
     plt.savefig('macdsignal.png')
 
     plt.figure(figsize=(10, 5))
+    plt.subplots_adjust(hspace=0.3)
+
+    plt.subplot(2, 1, 1)
+
+    plt.plot(range(460, 580), data[460:580], color='red', label='Cena akcji')
+
+    plt.ylabel('Cena akcji (PLN)')
+    plt.title('Cena akcji CD Projekt Red', fontweight='bold')
+    plt.grid(color='gray', linestyle='--')
+
+    plt.subplot(2, 1, 2)
 
     plt.plot(range(460, 580), macd[460:580], color='blue', label='MACD')
     plt.plot(range(460, 580), signal[460:580], color='red', label='SIGNAL')
@@ -122,7 +134,7 @@ def simulateSimple(dataset, macd, signal):
             actions += _actions
         elif macd[i] < signal[i] and macd[i - 1] >= signal[i - 1] and actions > 0:
             print(f"Dzień {i}: ", end=' ')
-            print(f'Sprzedałem {actions} akcje za {actions * data[i]} PLN')
+            print(f'Sprzedałem {actions} akcje za {actions * data[i]} PLN.')
             cash += actions * data[i]
             actions = 0
         cash_history.append(cash)
@@ -150,7 +162,7 @@ def simulateAdvanced(dataset, macd, signal, williams):
             actions += _actions
         elif macd[i] < signal[i] and macd[i - 1] >= signal[i - 1] and williams[i] < -80 and actions > 0:
             print(f"Dzień {i}: ", end=' ')
-            print(f'Sprzedałem {actions} akcje za {actions * data[i]} PLN')
+            print(f'Sprzedałem {actions} akcje za {actions * data[i]} PLN.')
             cash += actions * data[i]
             actions = 0
         cash_history.append(cash)
