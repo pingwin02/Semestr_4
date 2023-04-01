@@ -1,58 +1,78 @@
 ﻿using System.Collections.Concurrent;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 
 namespace Serwer
 {
     internal class Program
     {
-        private UdpClient _udpConnectionServer;
-        private UdpClient _udpPaintServer;
-        private List<IPEndPoint> _udpClients;
-        private BlockingCollection<KeyValuePair<byte, byte[]>> _paintCollection;
+        UdpClient _connectionServer;
+        UdpClient _paintServer;
+        List<IPEndPoint> _clients;
+        BlockingCollection<(byte, byte[])> _paintCollection;
+        List<(byte, byte[])> _paintCollectionBackup;
+
+        IPEndPoint _connectionEndPoint;
+        IPEndPoint _paintEndPoint;
 
         private static void Main()
         {
-            var program = new Program
-            {
-                _udpConnectionServer = new UdpClient(7777),
-                _udpPaintServer = new UdpClient(7778),
-                _udpClients = new List<IPEndPoint>(),
-                _paintCollection = new BlockingCollection<KeyValuePair<byte, byte[]>>(
-                    new ConcurrentBag<KeyValuePair<byte, byte[]>>())
-            };
-
-            var watchingTask = Task.Factory.StartNew(() => program.WatchClients());
-            var collectPaintDataTask = Task.Factory.StartNew(() => program.CollectPaintData());
-            var sendPaintDataTask = Task.Factory.StartNew(() => program.SendPaintData());
-
-            Console.WriteLine($"Server started at port {((IPEndPoint)program._udpConnectionServer.Client.LocalEndPoint).Port}");
-
-            Task.WaitAll(watchingTask, collectPaintDataTask, sendPaintDataTask);
+            new Program().Start();
         }
 
-        private void SendPaintData()
+        private void Start()
+        {
+            _connectionServer = new(0);
+            _paintServer = new(0);
+
+            _connectionEndPoint = (IPEndPoint)_connectionServer.Client.LocalEndPoint;
+            _paintEndPoint = (IPEndPoint)_paintServer.Client.LocalEndPoint;
+
+            _clients = new();
+            _paintCollection = new();
+            _paintCollectionBackup = new();
+
+            Console.WriteLine($"Server available at: {_connectionEndPoint.Port}");
+
+            Task.WaitAll(
+                Task.Factory.StartNew(MainThread),
+                Task.Factory.StartNew(CollectPaintData),
+                Task.Factory.StartNew(SendPaintData)
+            );
+
+        }
+        private void MainThread()
         {
             try
             {
                 while (true)
                 {
-                    var data = _paintCollection.Take();
-                    byte[] message = new byte[1 + data.Value.Length];
-                    message[0] = data.Key;
-                    Buffer.BlockCopy(data.Value, 0, message, 1, data.Value.Length);
-                    _udpClients.ForEach(client => _udpPaintServer.Send(message, message.Length, client));
-
+                    IPEndPoint endPoint = new(IPAddress.Any, 0);
+                    byte[] bytes = _connectionServer.Receive(ref endPoint);
+                    string message = Encoding.ASCII.GetString(bytes);
+                    if (message.Equals("connect"))
+                    {
+                        Console.WriteLine($"{endPoint} connected");
+                        _clients.Add(endPoint);
+                        byte[] paintPort = BitConverter.GetBytes(_paintEndPoint.Port);
+                        _connectionServer.Send(paintPort, paintPort.Length, endPoint);
+                        RestoreBoard(endPoint);
+                    }
+                    else if (message.Equals("disconnect"))
+                    {
+                        Console.WriteLine($"{endPoint} disconnected");
+                        _clients.Remove(endPoint);
+                    }
                 }
-
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(ex);
             }
+
         }
+
 
         private void CollectPaintData()
         {
@@ -60,10 +80,10 @@ namespace Serwer
             {
                 while (true)
                 {
-                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
-                    byte[] bytes = _udpPaintServer.Receive(ref endPoint);
-                    var client = _udpClients.FindIndex(x => x.Equals(endPoint));
-                    if (client == -1)
+                    IPEndPoint endPoint = new(IPAddress.Any, 0);
+                    byte[] bytes = _paintServer.Receive(ref endPoint);
+                    byte clientIndex = (byte)_clients.FindIndex(x => x.Equals(endPoint));
+                    if (clientIndex == -1)
                     {
                         Console.WriteLine($"Unknown client {endPoint} wants to draw something. Connection terminated.");
                     }
@@ -72,66 +92,67 @@ namespace Serwer
                         switch (bytes[0])
                         {
                             case 0x01:
-                                {
-                                    Console.WriteLine($"{endPoint} started drawing!");
-                                    break;
-                                }
-                            case 0x02:
-                                {
-                                    Console.WriteLine($"{endPoint} sent point!");
-                                    break;
-                                }
+                                Console.WriteLine($"{endPoint} has started drawing");
+                                break;
                             case 0x03:
-                                {
-                                    Console.WriteLine($"{endPoint} stopped drawing!");
-                                    break;
-                                }
+                                Console.WriteLine($"{endPoint} has stopped drawing");
+                                break;
                             default:
-                                Console.WriteLine("OTHER");
-                                continue;
+                                break;
                         }
-                        _paintCollection.Add(new KeyValuePair<byte, byte[]>((byte)client, bytes));
+                        _paintCollection.Add((clientIndex, bytes));
+                        _paintCollectionBackup.Add((clientIndex, bytes));
                     }
-
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(ex);
             }
 
         }
-
-        private void WatchClients()
+        private void SendPaintData()
         {
             try
             {
                 while (true)
                 {
-                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
-                    byte[] bytes = _udpConnectionServer.Receive(ref endPoint);
-                    string message = Encoding.ASCII.GetString(bytes);
-                    if (message.Equals("connect"))
-                    {
-                        Console.WriteLine($"{endPoint} connected");
-                        _udpClients.Add(endPoint);
-                        byte[] messageBack = BitConverter.GetBytes((short)((IPEndPoint)_udpPaintServer.Client.LocalEndPoint).Port);
-                        _udpConnectionServer.Send(messageBack, messageBack.Length, endPoint);
-                    }
-                    else if (message.Equals("disconnect"))
-                    {
-                        _udpClients.Remove(endPoint);
-                        Console.WriteLine($"{endPoint} disconnected");
-                    }
+                    var data = _paintCollection.Take();
+                    byte[] message = new byte[1 + data.Item2.Length];
+                    message[0] = data.Item1;
+                    Buffer.BlockCopy(data.Item2, 0, message, 1, data.Item2.Length);
+                    _clients.ForEach(client => _paintServer.Send(message, message.Length, client));
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(ex);
             }
-        }
-    }
 
+        }
+
+        private void RestoreBoard(IPEndPoint client)
+        {
+            try
+            {
+                Thread.Sleep(100);
+                Console.WriteLine($"Begin restoring board for {client}");
+                foreach (var data in _paintCollectionBackup)
+                {
+                    byte[] message = new byte[1 + data.Item2.Length];
+                    message[0] = data.Item1;
+                    Buffer.BlockCopy(data.Item2, 0, message, 1, data.Item2.Length);
+                    _paintServer.Send(message, message.Length, client);
+                }
+                Console.WriteLine($"End restoring board for {client}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+
+        }
+
+    }
 }
