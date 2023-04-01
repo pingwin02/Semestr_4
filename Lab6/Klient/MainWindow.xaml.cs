@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -26,11 +26,14 @@ namespace Klient
         bool isConnected = false;
         Color chosenColor;
         short brushSize;
+        Color tempColor;
+        short tempSize;
         UdpClient udpClient;
         IPEndPoint endPoint;
         int port;
-        Dictionary<byte, ColoredPoint> clientsPoints = new();
         Task task;
+
+        CancellationTokenSource cts;
         public MainWindow()
         {
             InitializeComponent();
@@ -67,7 +70,8 @@ namespace Klient
                 udpClient = new(port);
 
                 udpClient.Connect(endPoint);
-                Debug.WriteLine($"Connected to server {endPoint}");
+
+                cts = new();
 
                 task = Task.Run(WaitForPaintData);
                 ChangeStatus(true);
@@ -85,6 +89,8 @@ namespace Klient
         {
             try
             {
+                cts.Cancel();
+                task.Wait();
                 udpClient.Close();
                 udpClient = new(port);
 
@@ -152,8 +158,9 @@ namespace Klient
             udpClient.Send(bytes, bytes.Length);
         }
 
-        private void ManageIncomingMessage(byte[] bytes, byte id)
+        private void ManageIncomingMessage(byte[] bytes)
         {
+
             switch (bytes[1])
             {
                 case 0x01: //color and size
@@ -162,15 +169,13 @@ namespace Klient
                         Buffer.BlockCopy(bytes, 2, color, 0, color.Length);
                         byte[] size = new byte[2];
                         Buffer.BlockCopy(bytes, 6, size, 0, size.Length);
-                        clientsPoints[id] = new(
-                            Color.FromArgb(BitConverter.ToInt32(color, 0)),
-                            new(0),
-                            BitConverter.ToInt16(size, 0));
+                        tempColor = Color.FromArgb(BitConverter.ToInt32(color, 0));
+                        tempSize = BitConverter.ToInt16(size, 0);
                         break;
                     }
                 case 0x02: //position
                     {
-                        Draw(bytes, id);
+                        Draw(bytes);
                         break;
                     }
                 default:
@@ -178,20 +183,26 @@ namespace Klient
                         return;
                     }
             }
+
         }
 
 
-        private void WaitForPaintData()
+        private async Task WaitForPaintData()
         {
             try
             {
                 while (isConnected)
                 {
-                    IPEndPoint endPoint = new(IPAddress.Any, 0);
-                    byte[] bytes = udpClient.Receive(ref endPoint);
-                    byte id = bytes[0];
-                    ManageIncomingMessage(bytes, id);
+                    UdpReceiveResult result = await udpClient.ReceiveAsync(cts.Token);
+                    byte id = result.Buffer[0];
+                    byte type = result.Buffer[1];
+                    //Debug.WriteLine($"Client {id}: Type:{type}");
+                    ManageIncomingMessage(result.Buffer);
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                return;
             }
             catch (Exception ex)
             {
@@ -200,33 +211,29 @@ namespace Klient
         }
 
 
-        private void Draw(byte[] bytes, byte id)
+        private void Draw(byte[] bytes)
         {
 
             Board.Dispatcher.Invoke(
                 new(() =>
                 {
-                    var client = clientsPoints[id];
                     byte[] position = new byte[4];
                     Buffer.BlockCopy(bytes, 2, position, 0, position.Length);
                     Point point = new(BitConverter.ToInt32(position, 0));
-                    client.Point = point;
                     Brush brush = new SolidColorBrush(
                         System.Windows.Media.Color.FromRgb(
-                            client.Color.R,
-                            client.Color.G,
-                            client.Color.B));
-
-                    brushSize = client.Size;
+                            tempColor.R,
+                            tempColor.G,
+                            tempColor.B));
 
                     Line line = new()
                     {
-                        X1 = point.X - brushSize,
+                        X1 = point.X - tempSize,
                         X2 = point.X,
-                        Y1 = point.Y - brushSize,
+                        Y1 = point.Y - tempSize,
                         Y2 = point.Y,
                         Stroke = brush,
-                        StrokeThickness = brushSize
+                        StrokeThickness = tempSize
                     };
                     Board.Children.Add(line);
                 }));
@@ -234,17 +241,4 @@ namespace Klient
 
     }
 
-    internal class ColoredPoint
-    {
-        public ColoredPoint(Color color, Point point, short size)
-        {
-            Color = color;
-            Point = point;
-            Size = size;
-
-        }
-        public Color Color { get; set; }
-        public Point Point { get; set; }
-        public short Size { get; set; }
-    }
 }

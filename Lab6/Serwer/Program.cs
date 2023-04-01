@@ -37,8 +37,8 @@ namespace Serwer
 
             Task.WaitAll(
                 Task.Factory.StartNew(MainThread),
-                Task.Factory.StartNew(CollectPaintData),
-                Task.Factory.StartNew(SendPaintData)
+                Task.Factory.StartNew(SecondThread),
+                Task.Factory.StartNew(ThirdThread)
             );
 
         }
@@ -74,7 +74,7 @@ namespace Serwer
         }
 
 
-        private void CollectPaintData()
+        private void SecondThread()
         {
             try
             {
@@ -82,7 +82,7 @@ namespace Serwer
                 {
                     IPEndPoint endPoint = new(IPAddress.Any, 0);
                     byte[] bytes = _paintServer.Receive(ref endPoint);
-                    byte clientIndex = (byte)_clients.FindIndex(x => x.Equals(endPoint));
+                    int clientIndex = _clients.FindIndex(x => x.Equals(endPoint));
                     if (clientIndex == -1)
                     {
                         Console.WriteLine($"Unknown client {endPoint} wants to draw something. Connection terminated.");
@@ -100,8 +100,8 @@ namespace Serwer
                             default:
                                 break;
                         }
-                        _paintCollection.Add((clientIndex, bytes));
-                        _paintCollectionBackup.Add((clientIndex, bytes));
+                        _paintCollection.Add(((byte)clientIndex, bytes));
+                        _paintCollectionBackup.Add(((byte)clientIndex, bytes));
                     }
                 }
             }
@@ -111,7 +111,7 @@ namespace Serwer
             }
 
         }
-        private void SendPaintData()
+        private void ThirdThread()
         {
             try
             {
