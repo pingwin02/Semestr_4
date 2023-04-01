@@ -1,0 +1,25 @@
+﻿<Window x:Class="Klient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Klient"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid Background="LightGray">
+        <TextBox x:Name="IP_TextBox" HorizontalAlignment="Left" Margin="634,15,0,0" TextWrapping="Wrap" Text="localhost" VerticalAlignment="Top" Width="139" Height="37"/>
+        <Label Content="IP" HorizontalAlignment="Left" Margin="559,20,0,0" VerticalAlignment="Top" Width="23" Height="28"/>
+        <TextBox x:Name="Port_TextBox" HorizontalAlignment="Left" Margin="634,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="139" Height="37"/>
+        <Label Content="Port" HorizontalAlignment="Left" Margin="559,62,0,0" VerticalAlignment="Top" Width="36" Height="28"/>
+        <Button x:Name="Connect_Button" Content="Connect" HorizontalAlignment="Left" Margin="571,115,0,0" VerticalAlignment="Top" Height="37" Width="92" Click="Connect_Button_Click"/>
+        <Button x:Name="Disconnect_Button" Content="Disconnect" HorizontalAlignment="Left" Margin="675,115,0,0" VerticalAlignment="Top" Height="37" Width="93" IsEnabled="False" Click="Disconnect_Button_Click"/>
+        <TextBox x:Name="Status_TexBox" Margin="571,157,0,0" TextWrapping="Wrap" Width="197" Height="21" IsEnabled="False" Text="Disconnected" HorizontalAlignment="Left" VerticalAlignment="Top" TextAlignment="Center"/>
+        <Slider x:Name="BrushSize_Slider" HorizontalAlignment="Left" Margin="571,257,0,0" VerticalAlignment="Top" Width="174" Minimum="1" Value="5" Height="19" ValueChanged="BrushSize_Slider_ValueChanged"/>
+        <TextBox x:Name="BrushSize_TextBox" HorizontalAlignment="Left" Margin="750,257,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="5" IsEnabled="False" Width="20" Height="19"/>
+        <Rectangle x:Name="BrushColor_Rectangle" HorizontalAlignment="Left" Height="95" Margin="568,300,0,0" Stroke="Black" VerticalAlignment="Top" Width="203" Fill="Black" MouseDown="BrushColor_Rectangle_MouseDown"/>
+        <Canvas x:Name="Board" Margin="10,10,250,10" Background="White" MouseDown="Board_MouseDown" MouseMove="Board_MouseMove" MouseUp="Board_MouseUp"/>
+
+
+
+    </Grid>
+</Window>
