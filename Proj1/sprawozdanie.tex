@@ -80,19 +80,19 @@
     \subsection{Dane wejściowe}
 
     Dane wejściowe pobrałem z serwisu \textbf{Yahoo! Finance API} \cite{api} w formacie \textit{.csv} i obejmują
-    ceny akcji firmy \textbf{CD Projekt Red} od 2019-01-16 do 2022-11-30.
+    ceny akcji firmy \textbf{CD Projekt Red} od 2019-01-16 do 2022-11-30
     Był to dość ciężki okres, gdyż w tym czasie wydano grę
     \textbf{Cyberpunk 2077}, która posiadała wielkie problemy z optymalizacją podczas premiery,
-    co znacząco wpłynęło na rynek.
+    co znacząco wpłynęło na rynek w tamtym czasie.
 
+    Dla wybranego przedziału czasu istnieje dokładnie 1000 próbek, interwał między nimi wynosi jeden dzień.
     \begin{figure}[H]
         \includegraphics[width=\textwidth]{wykres.png}
         \centering
         \caption{Wykres ceny akcji firmy CD Projekt Red}
     \end{figure}
 
-    Dla wybranego przedziału czasu istnieje dokładnie 1000 próbek.
-
+   
     \subsection{Implementacja}
 
     W celu implementacji wskaźnika napisałem skrypt w języku \textit{Python}.
@@ -129,11 +129,11 @@
     Dla wybranej polityki inwestycyjnej, po zakończeniu symulacji, algorytm zanotował następujący zysk:
     \begin{verbatim}
         ...
-        Dzień 980:  Kupiłem 8 akcje za 1089.760008 PLN.
-        Dzień 992:  Sprzedałem 8 akcje za 1114.239992 PLN.
-        Zysk: 151.0900469999999 PLN. Pozostało akcji: 0 sztuk.
+        Dzień 980:  Kupiłem 8 akcje za 1089.76 PLN. Stan: 36.85 PLN, 8 akcji.
+        Dzień 992:  Sprzedałem 8 akcje za 1114.24 PLN. Stan: 1151.1 PLN, 0 akcji.
+        Zysk: 151 PLN. Pozostało akcji: 0 sztuk.
         Sprzedaję resztę akcji za 0.0 PLN.
-        Zysk całkowity: 151.0900469999999 PLN.
+        Zysk końcowy: 151 PLN.
     \end{verbatim}
 
     \subsubsection{Symulacja złożona}
@@ -174,61 +174,81 @@
 Fragment wydruku z symulacji złożonej:
     \begin{verbatim}
         ...
-        Dzień 804:  Sprzedałem 9 akcje za 1521.0 PLN.
-        Dzień 943:  Kupiłem 17 akcje za 1492.6000510000001 PLN.
-        Zysk: -967.8000589999999 PLN. Pozostało akcji: 17 sztuk.
-        Sprzedaję resztę akcji za 2226.659932 PLN.
-        Zysk całkowity: 1258.8598730000003 PLN.
+        Dzień 804:  Sprzedałem 9 akcje za 1521.0 PLN. Stan: 1524.8 PLN, 0 akcji.
+        Dzień 943:  Kupiłem 17 akcje za 1492.6 PLN. Stan: 32.2 PLN, 17 akcji.
+        Zysk: -967.8 PLN. Pozostało akcji: 17 sztuk.
+        Sprzedaję resztę akcji za 2226.66 PLN.
+        Zysk końcowy: 1258.86 PLN.
     \end{verbatim}
 
-    \subsection{Wnioski}
+    \subsection{Analiza fragmentu symulacji}
+    W celu przeanalizowania działania algorytmu, wybrałem fragment symulacji między 460. a 580. dniem. 
+    W tym czasie dochodziło do gwałtownych zmian cen akcji, spowodowanych m.in. wydaniem wcześniej wspomnianej
+    gry \textbf{Cyberpunk 2077}.
 
+    \subsubsection{Symulacja prosta}
     Gdy przyjrzeć się fragmentowi wykresu \textbf{MACD} oraz \textbf{SIGNAL}, można zauważyć, że
     algorytm podejmował dobre decyzje, jednak w pewnych momentach nie był w stanie przewidzieć
-    zmian cen akcji odpowiednio szybko. W szczególności w momencie wydania gry \textbf{Cyberpunk 2077}.
+    zmian cen akcji odpowiednio szybko. Drastyczny spadek ceny akcji nastąpił około 492. dnia, 
+    natomiast algorytm zdecydował o sprzedaży dopiero w 496. dniu. 
+    Z kolei w okolicach dnia 530. wskaźnik nie zauważył wzrostu ceny akcji,
+    tracąc w ten sposób możliwość zysku.
 
     \begin{figure}[H]
-        \includegraphics[width=\textwidth]{macdsignal_zoom.png}
+        \includegraphics[width=\textwidth]{zoom_simple.png}
         \centering
-        \caption{Fragment wykresu \textbf{MACD} oraz \textbf{SIGNAL}}{ wraz z zaznaczonymi momentami kupna i sprzedaży
+        \caption{Fragment wykresu \textbf{MACD} oraz \textbf{SIGNAL} między 460. a 580. dniem symulacji}{ wraz z zaznaczonymi momentami kupna i sprzedaży
         dla symulacji prostej}
-        \label{fig:macdsignal_zoom}
     \end{figure}
 
-    Fragment wydruku algorytmu dotyczący powyższego wykresu:
     \begin{verbatim}
         ...
-        Dzień 469:  Kupiłem 4 akcje za 1460.0 PLN.
-        Dzień 485:  Sprzedałem 4 akcje za 1456.0 PLN.
-        Dzień 488:  Kupiłem 3 akcje za 1168.5 PLN.
-        Dzień 496:  Sprzedałem 3 akcje za 1086.0 PLN.
-        Dzień 509:  Kupiłem 5 akcje za 1402.5 PLN.
-        Dzień 537:  Sprzedałem 5 akcje za 1466.9999699999998 PLN.
-        Dzień 562:  Kupiłem 6 akcje za 1359.0 PLN.
-        Dzień 575:  Sprzedałem 6 akcje za 1143.0 PLN.
+        Dzień 469:  Kupiłem 4 akcje za 1460.0 PLN. Stan: 51.9 PLN, 4 akcji.
+        Dzień 485:  Sprzedałem 4 akcje za 1456.0 PLN. Stan: 1507.9 PLN, 0 akcji.
+        Dzień 488:  Kupiłem 3 akcje za 1168.5 PLN. Stan: 339.4 PLN, 3 akcji.
+        Dzień 496:  Sprzedałem 3 akcje za 1086.0 PLN. Stan: 1425.4 PLN, 0 akcji.
+        Dzień 509:  Kupiłem 5 akcje za 1402.5 PLN. Stan: 22.9 PLN, 5 akcji.
+        Dzień 537:  Sprzedałem 5 akcje za 1467.0 PLN. Stan: 1489.9 PLN, 0 akcji.
+        Dzień 562:  Kupiłem 6 akcje za 1359.0 PLN. Stan: 130.9 PLN, 6 akcji.
+        Dzień 575:  Sprzedałem 6 akcje za 1143.0 PLN. Stan: 1273.9 PLN, 0 akcji.
         ...
     \end{verbatim}
+    \subsubsection{Symulacja złożona}
+    Natomiast w przypadku złożonej symulacji, algorytm 
+    decydował o kupnie lub sprzedaży akcji tylko w przypadku, gdy wskaźnik \textbf{\%R Williamsa} 
+    osiągał konkretne wartości progowe. Efektem tego była zdecydowanie mniejsza liczba transakcji, 
+    niż w przypadku symulacji prostej oraz większa ilość zysku.
 
-    Wynika to z tego, że oba te wskaźniki opierają się na stosunkowo dużym
-    okresie czasu wstecz. W przypadku \textbf{MACD} dopiero po 26 próbkach, a w przypadku \textbf{SIGNALA}
-    dopiero po 35 próbkach jesteśmy w stanie dokonywać analizy. Stąd nadaje się
-    on raczej do inwestycji długoterminowych, niż krótkoterminowych.
 
-    Z kolei wskaźnik \textbf{\%R Williamsa} jest w stanie przewidzieć zmiany cen
-    korzystając z mniejszej ilości danych.
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{zoom_advanced.png}
+        \centering
+        \caption{Fragment wykresu \textbf{MACD}, \textbf{SIGNAL} oraz \textbf{\%R Williamsa} między 460. a 580. dniem}{symulacji wraz z zaznaczonymi momentami kupna i sprzedaży
+        dla symulacji złożonej}
+    \end{figure}
+
+    \begin{verbatim}
+        ...
+        Dzień 469:  Kupiłem 4 akcje za 1460.0 PLN. Stan: 178.9 PLN, 4 akcji.
+        Dzień 496:  Sprzedałem 4 akcje za 1448.0 PLN. Stan: 1626.9 PLN, 0 akcji.
+        ...
+    \end{verbatim}
 
     \section{Podsumowanie}
     Wskaźnik \textbf{MACD} dla wybranych przeze mnie danych wykazał się dobrą skutecznością i moim
     zdaniem jest przydatny w analizie technicznej.
-    W przypadku obu symulacji algorytm zwrócił zysk, choć wariant złożony osiągnął lepszy wynik.
 
-    Prosta symulacja oparta tylko o \textbf{MACD} zwróciła zysk w wysokości 151 PLN.
+    Prosta symulacja oparta tylko o \textbf{MACD} zwróciła zysk w wysokości \textit{151 PLN}.
     Patrząc na wykres \textbf{MACD} oraz \textbf{SIGNAL} można zauważyć, że algorytm
-    podejmował poprawne decyzje. Dokładnie to widać na Rysunku \ref{fig:macdsignal_zoom}.
+    podejmował poprawne, lecz spóźnione decyzje.
 
     Natomiast złożona symulacja, która uwzględniała również \textbf{\%R Williamsa} 
-    zwróciła zysk w wysokości 1258 PLN. Dodanie kolejnych warunków spowodowało, że
-    algorytm podejmował mniej, ale za to bardziej trafnych decyzji.
+    zwróciła zysk w wysokości \textit{1258 PLN}. Dodanie kolejnych warunków spowodowało, że
+    algorytm podejmował mniej, ale za to bardziej trafnych i zyskownych decyzji.
+
+    Jednakże w przypadku obu symulacji można zauważyć, że \textbf{MACD} nie zawsze
+    reagował na zmiany cen akcji w odpowiednim czasie, dlatego nie powinien być on
+    stosowany do analiz krótkoterminowych inwestycji, a jedynie do analiz długoterminowych.
 
     \renewcommand{\refname}{Źródła}
     \begin{thebibliography}{100}
