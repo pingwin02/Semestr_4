@@ -3,10 +3,10 @@ package pl.edu.pg.kask.pt;
 import java.util.*;
 
 public class Mage implements Comparable<Mage> {
-    private String name;
-    private int level;
-    private double power;
-    private Set<Mage> apprentices;
+    private final String name;
+    private final int level;
+    private final double power;
+    private Set<Mage> children;
 
     public Mage(String name, int level, double power) {
         this.name = name;
@@ -14,8 +14,8 @@ public class Mage implements Comparable<Mage> {
         this.power = power;
     }
 
-    public void addAprentices(Set<Mage> apprentices) {
-        this.apprentices = apprentices;
+    public void addChildren(Set<Mage> children) {
+        this.children = children;
     }
 
     public String getName() {
@@ -30,8 +30,8 @@ public class Mage implements Comparable<Mage> {
         return power;
     }
 
-    public Set<Mage> getApprentices() {
-        return apprentices;
+    public Set<Mage> getChildren() {
+        return children;
     }
 
     public static void printMages(Set<Mage> mages, int depth) {
@@ -40,15 +40,37 @@ public class Mage implements Comparable<Mage> {
                 System.out.print("-");
             }
             System.out.println(mage);
-            if (mage.getApprentices() != null) {
-                printMages(mage.getApprentices(), depth + 1);
+            if (mage.getChildren() != null) {
+                printMages(mage.getChildren(), depth + 1);
             }
         }
     }
 
+    public static Map<Mage, Integer> countChildren(Set<Mage> mages, String mode) {
+        Map<Mage, Integer> result = null;
+
+        switch (mode) {
+            case "-no" -> result = new HashMap<>();
+            case "-nat" -> result = new TreeMap<>();
+            case "-alt" -> result = new TreeMap<>(new LevelComparator());
+            default -> {
+                System.out.println("Unknown mode: " + mode);
+                System.exit(1);
+            }
+        }
+
+        for (Mage mage : mages) {
+            if (mage.getChildren() != null) {
+                result.put(mage, mage.getChildren().size());
+                result.putAll(countChildren(mage.getChildren(), mode));
+            }
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
-        return "Mage{ name='" + name + "', level=" + level + ", power=" + power + "}";
+        return "Mage{name='" + name + "', level=" + level + ", power=" + power + "}";
     }
 
     @Override
@@ -71,11 +93,11 @@ public class Mage implements Comparable<Mage> {
         return level == mage.level &&
                 Double.compare(mage.power, power) == 0 &&
                 Objects.equals(name, mage.name) &&
-                Objects.equals(apprentices, mage.apprentices);
+                Objects.equals(children, mage.children);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, level, power, apprentices);
+        return Objects.hash(name, level, power, children);
     }
 }
