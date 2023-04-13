@@ -50,21 +50,43 @@ public class Mage implements Comparable<Mage> {
         Map<Mage, Integer> result = null;
 
         switch (mode) {
-            case "-no" -> result = new HashMap<>();
-            case "-nat" -> result = new TreeMap<>();
-            case "-alt" -> result = new TreeMap<>(new LevelComparator());
-            default -> {
+            case "-no" : {
+                result = new HashMap<>();
+                break;
+            }
+            case "-nat" : {
+                result = new TreeMap<>();
+                break;
+            }
+            case "-alt" : {
+                result = new TreeMap<>(new LevelComparator());
+                break;
+            }
+            default : {
                 System.out.println("Unknown mode: " + mode);
                 System.exit(1);
+                break;
             }
         }
 
         for (Mage mage : mages) {
+                result.put(mage, mage.countChildren());
             if (mage.getChildren() != null) {
-                result.put(mage, mage.getChildren().size());
                 result.putAll(countChildren(mage.getChildren(), mode));
             }
         }
+        return result;
+    }
+
+    public Integer countChildren() {
+        if (children == null) return 0;
+
+        Integer result = children.size();
+
+        for (Mage child : children) {
+            result += child.countChildren();
+        }
+
         return result;
     }
 

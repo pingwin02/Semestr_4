@@ -2,9 +2,6 @@ package pl.edu.pg.kask.pt;
 
 import java.util.*;
 
-/**
- * Hello world!
- */
 public class App {
 
 
@@ -21,25 +18,28 @@ public class App {
         Set<Mage> children3 = null;
 
         switch (mode) {
-            case "-no" -> {  //no sorting
+            case "-no" : {  //no sorting
                 mages = new HashSet<>();
                 children1 = new HashSet<>();
                 children2 = new HashSet<>();
                 children3 = new HashSet<>();
+                break;
             }
-            case "-nat" -> {  //default sorting
+            case "-nat" : {  //default sorting
                 mages = new TreeSet<>();
                 children1 = new TreeSet<>();
                 children2 = new TreeSet<>();
                 children3 = new TreeSet<>();
+                break;
             }
-            case "-alt" -> {  //alternative sorting
+            case "-alt" : {  //alternative sorting
                 mages = new TreeSet<>(new LevelComparator());
                 children1 = new TreeSet<>(new LevelComparator());
                 children2 = new TreeSet<>(new LevelComparator());
                 children3 = new TreeSet<>(new LevelComparator());
+                break;
             }
-            default -> {
+            default : {
                 System.out.println("Unknown mode: " + mode);
                 System.exit(1);
             }
@@ -76,8 +76,10 @@ public class App {
 
         Mage.printMages(mages, 0);
 
+        System.out.println();
+
         Mage.countChildren(mages, mode).forEach((mage, integer)
-                -> System.out.println(mage.getName() + " : " + integer));
+                -> System.out.println(mage + " : " + integer));
 
     }
 }
