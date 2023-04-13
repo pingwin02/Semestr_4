@@ -10,11 +10,11 @@ function [xvect,xdif,fx,it_cnt] = bisection(fun,a,b,eps)
 
     it_cnt = 1;
 
-    while 1
+    for i = 1:1000
         c = (a + b)/2;
-        xvect(it_cnt) = c;
-        fx(it_cnt) = fun(c);
-        if abs(fun(c)) < eps
+        xvect(i) = c;
+        fx(i) = fun(c);
+        if abs(fun(c)) < eps || abs(b - a) < eps
             break
         elseif fun(a)*fun(c) < 0
             b = c;

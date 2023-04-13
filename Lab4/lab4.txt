@@ -1,0 +1,17 @@
+Funkcja fzero z reguły pobiera 2 argumenty: uchwyt do badanej funkcji oraz miejsce, wokół którego ma szukać miejsca zerowego.
+Na początku próbuje znaleźć przedział wokół podanego miejsca, w którym funkcja zmienia znak. Przykładowo dla x0 = 6:
+
+Search for an interval around 6 containing a sign change:
+ Func-count    a          f(a)             b          f(b)        Procedure
+    1               6     -0.291006             6     -0.291006   initial interval
+    3         5.83029     -0.486626       6.16971     -0.113969   search
+    5            5.76     -0.576799          6.24    -0.0432122   search
+    7         5.66059     -0.717836       6.33941     0.0562853   search
+
+Następnie metodą interpolacji oraz bisekcji stara się znaleźć w tym przydziale punkt, w którym funkcja przyjmuje wartość najbliższej zeru.
+
+W przypadku punktu startowego 6.0 funkcja fzero zwróciła prawidłową wartość miejsca zerowego (6.2832 = 2pi) po 13 iteracjach. 
+Wartość f(x) wyniosła -2.44929e-16.
+
+Natomiast dla punktu 4.5 algorytm po 68 iteracjach zdecydował o zakończeniu szukania z powodu rosnącej różnicy pomiędzy wartościami przybliżonego rozwiązania.
+Dzieje się tak dlatego, że w przedziale jaki wybrał algorytm [4.24544, 4.75456] jest miejsce, gdzie tanges nie posiada wartości (4.7124 = 3/2pi). Taki wynik zwrócił również algorytm.
