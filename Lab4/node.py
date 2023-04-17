@@ -15,7 +15,25 @@ class Node:
         best_gain = -np.inf
         best_idx = 0
 
-        # TODO find position of best data split
+        for idx in possible_splits:
+            left = y[idx:]
+            right = y[:idx + 1]
+
+            left_positive = np.sum(left)
+            left_negative = len(left) - left_positive
+
+            right_positive = np.sum(right)
+            right_negative = len(right) - right_positive
+
+            gini_left = 1 - (left_positive / len(left)) ** 2 - (left_negative / len(left)) ** 2
+
+            gini_right = 1 - (right_positive / len(right)) ** 2 - (right_negative / len(right)) ** 2
+
+            gini_gain = 1 - len(left) / len(y) * gini_left - len(right) / len(y) * gini_right
+
+            if gini_gain > best_gain:
+                best_gain = gini_gain
+                best_idx = idx
 
         return best_idx, best_gain
 
@@ -34,9 +52,12 @@ class Node:
         best_gain = -np.inf
         best_split = None
 
-        # TODO implement feature selection
+        if feature_subset is None:
+            selected_features = range(X.shape[1])
+        else:
+            selected_features = np.random.choice(range(X.shape[1]), size=feature_subset, replace=False)
 
-        for d in range(X.shape[1]):
+        for d in selected_features:
             order = np.argsort(X[:, d])
             y_sorted = y[order]
             possible_splits = self.find_possible_splits(X[order, d])
