@@ -144,7 +144,8 @@ $
     \end{bmatrix} 
 $
 \end{center}
-Odwzorowanie jest przedstawione wzorem $y = f(x, w) = w_1x_1 + w_2x + w_3x_1x_2 + w_4x_1/x_2 +w_5x_1^2 +w_6x_2^2$.
+Odwzorowanie jest przedstawione wzorem $y = f(x, w) = w_1x_1 + w_2x + w_3x_1x_2 + 
+w_4x_1/x_2 +w_5x_1^2 +w_6x_2^2$.
 
 \subsection{Rozwiązanie}
 Dla podanych danych wagi wynoszą:
@@ -175,6 +176,27 @@ $
     \end{bmatrix} 
 $.
 Natomiast $E(w)$ wynosi $2.2706643$.
+
+\section{Wnioski}
+Metoda najmniejszych kwadratów jest prostą i szybką metodą 
+estymacji parametrów modelu, która dobrze sprawdza się w 
+przypadku prostych modeli.
+
+Metoda ta ma jednak kilka wad, takich jak wrażliwość 
+na odstające wartości oraz brak możliwości uwzględnienia 
+zmiennych kategorycznych czy nieliniowych zależności.
+
+W przypadku bardziej skomplikowanych modeli, gdzie zależność 
+między zmiennymi jest nieliniowa, lepsze rezultaty daje 
+stosowanie metod gradientowych, które pozwalają na znalezienie 
+minimum funkcji kosztu w bardziej ogólnym przypadku.
+
+Metoda gradientowa jest jednak bardziej złożona i wymaga 
+większej liczby obliczeń niż metoda najmniejszych kwadratów.
+
+W praktyce stosuje się różne metody w zależności od charakteru 
+danych oraz celu modelowania.
+
 
 \section{Kod programu}
 \lstinputlisting[

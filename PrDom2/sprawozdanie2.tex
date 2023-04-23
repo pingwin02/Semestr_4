@@ -21,9 +21,11 @@ minimalizacja wybranej funkcji}
 \section{Wstęp}
 Tematem pracy domowej jest zapoznanie się z minimalizacją funkcji
 metodą gradientową. W tym celu wybrałem funkcję
-$f(x, y) = 3x^2-2xy+3y^2-2x-4y$. Poszukiwanie minimum funkcji
+$f(x, y) = 3(x-1)^2-2(x-1)y+3y^2$. Minimum funkcji to $f(1, 0) = 0$.
+
+Poszukiwanie minimum funkcji
 zaczęłem od wybrania losowego punktu startowego $X_0$ z zakresu
-$-100 \le x \le 100$ oraz $-100 \le y \le 100$.
+$-3 \le x \le 3$ oraz $-3 \le y \le 3$.
 
 \begin{figure}[H]
     \centering
@@ -49,33 +51,51 @@ cząstkowych:
 \end{equation}
 W przypadku wybranej funkcji gradient ma postać:
 \begin{equation}
-\nabla f(x, y) = {6x-2y-2 \choose -2x+6y-4}
+\nabla f(x, y) = {6(x - 1)-2y \choose -2(x-1)+6y}
 \end{equation}
 Dla tego przykładu stała kroku $\alpha_k = 0.1$ natomiast
-warunek zakończenia to ilość iteracji $k \ge 25$
+warunek zakończenia to wartość funkcji mniejsza niż $10^{-4}$ lub 
+ilość iteracji większa niż 1000.
 
 \section{Przykładowe obliczenia}
 
-Dla przykładowego punktu startowego $X_0 = (1, 1)$
+Dla przykładowego punktu startowego $X_0 = (-2, 3)$
 wyznaczenie 5 kolejnych punktów wygląda następująco:
 \begin{equation*}
     \begin{aligned}
-X_1 &= {{1} \choose {1}} - 0.1 {{6 - 2 - 2}\choose{-2 + 6 - 4}} = {{0.8} \choose {1}} \\
-X_2 &= {{0.8} \choose {1}} - 0.1 {{6 \cdot 0.8 - 2 \cdot 1 - 2}\choose{-2 \cdot 0.8 + 6 \cdot 1 - 4}} = {{0.72} \choose {0.96}} \\
-X_3 &= {{0.72} \choose {0.96}} - 0.1 {{6 \cdot 0.72 - 2 \cdot 0.96 - 2}\choose{-2 \cdot 0.72 + 6 \cdot 0.96 - 4}} = {{0.68} \choose {0.928}} \\
-X_4 &= {{0.68} \choose {0.928}} - 0.1 {{6 \cdot 0.68 - 2 \cdot 0.928 - 2}\choose{-2 \cdot 0.68 + 6 \cdot 0.928 - 4}} = {{0.656} \choose {0.9072}} \\
-X_5 &= {{0.656} \choose {0.9072}} - 0.1 {{6 \cdot 0.656 - 2 \cdot 0.9072 - 2}\choose{-2 \cdot 0.656 + 6 \cdot 0.9072 - 4}} = {{0.644} \choose {0.8944}}
+    X_1 &= {{-2} \choose {3}} - 0.1 {6(-2 - 1)-2\cdot3 \choose -2\cdot(-2-1)+6\cdot3} = {{0.4} \choose {0.6}} \\
+    X_2 &= {{0.4} \choose {0.6}} - 0.1 {6(0.4 - 1)-2\cdot0.6 \choose -2\cdot(0.4-1)+6\cdot0.6} = {{0.88} \choose {0.12}} \\
+    X_3 &= {{0.88} \choose {0.12}} - 0.1 {6(0.88 - 1)-2\cdot0.12 \choose -2\cdot(0.88-1)+6\cdot0.12} = {{0.976} \choose {0.024}} \\
+    X_4 &= {{0.976} \choose {0.024}} - 0.1 {6(0.976 - 1)-2\cdot0.024 \choose -2\cdot(0.976-1)+6\cdot0.024} = {{0.9952} \choose {0.0048}} \\
+    X_5 &= {{0.9952} \choose {0.0048}} - 0.1 {6(0.9952 - 1)-2\cdot0.0048 \choose -2\cdot(0.9952-1)+6\cdot0.0048} = {{0.99904} \choose {0.00096}}
     \end{aligned}
 \end{equation*}
 
+Dla tego przykładu wartość funkcji w punkcie $X_5$ wynosi $f(X_5) = 7.3727 \cdot 10^{-6}$,
+algorytm się kończy.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{plot.png}
     \caption{Rzut 2D funkcji $f(x, y)$ oraz kolejne kroki
-    minimalizacji metodą gradientową} {dla wylosowanego punktu startowego}
+    minimalizacji metodą gradientową} {dla wylosowanych 100 punktów startowych}
 \end{figure}
 
+Po wykonaniu obliczeń dla 100 losowo wybranych
+punktów startowych średnia wartość
+iteracji do osiągnięcia minimum wynosiła około 10.
+
+\section{Wnioski}
+Metoda gradientowa jest efektywną metodą szukania minimum funkcji, 
+która polega na iteracyjnym kroku w kierunku przeciwnym do gradientu 
+funkcji w danym punkcie. Metoda ta wymaga znajomości pochodnych 
+cząstkowych funkcji, co może być trudne lub czasochłonne dla bardziej 
+skomplikowanych funkcji.
+
+W przypadku funkcji o jednym minimum globalnym, metoda gradientowa 
+zwykle osiąga minimum w niewielkiej liczbie kroków. Jednak w przypadku 
+funkcji z wieloma minimami lokalnymi, metoda ta może "utknąć" w minimum 
+lokalnym i nie osiągnąć minimum globalnego.
 
 \section{Kod programu}
 \lstinputlisting[

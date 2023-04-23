@@ -1,26 +1,36 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+RANGE = 3
+
+
+def f(x, y):
+    return 3 * (x - 1) ** 2 - 2 * (x - 1) * y + 3 * y ** 2
+
 
 def gradient(x, y):
-    grad = np.array([6 * x - 2 * y - 2, -2 * x + 6 * y - 4])
+    grad = np.array([6 * (x - 1) - 2 * y, -2 * (x - 1) + 6 * y])
     return grad
 
 
-def gradient_descent(gradient, w0, num_iter):
+def gradient_descent(gradient, w0):
     w = w0
     w_hist = [w0]
-    for i in range(num_iter):
+    k = 1
+    while True:
         w = w - 0.1 * gradient(w[0], w[1])
         w_hist.append(w)
-    return w_hist
+        if f(*w) < 1e-4 or k > 1000:
+            break
+        k += 1
+    return w_hist, k
 
 
-x = np.linspace(-100, 100, 1000)
-y = np.linspace(-100, 100, 1000)
+x = np.linspace(-RANGE, RANGE, 1000)
+y = np.linspace(-RANGE, RANGE, 1000)
 
 X, Y = np.meshgrid(x, y)
-Z = 3 * X ** 2 - 2 * X * Y + 3 * Y ** 2 - 2 * X - 4 * Y
+Z = f(X, Y)
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
@@ -31,23 +41,32 @@ ax.set_zlabel('z')
 ax.view_init(30, 45)
 plt.savefig('function.png')
 plt.show()
+k_hist = []
+for i in range(100):
+    w_hist, k = gradient_descent(gradient, np.array([
+        np.random.uniform(-RANGE, RANGE),
+        np.random.uniform(-RANGE, RANGE)
+    ]))
 
-w_hist = gradient_descent(gradient, np.array([
-    200 * np.random.rand() - 100,
-    200 * np.random.rand() - 100,
-]), 25)
+    k_hist.append(k)
+
+    for i in range(len(w_hist)):
+        plt.plot(w_hist[i][0], w_hist[i][1], 'r.')
+        if i < len(w_hist) - 1:
+            plt.arrow(w_hist[i][0], w_hist[i][1], w_hist[i + 1][0] -
+                      w_hist[i][0], w_hist[i + 1][1] - w_hist[i][1],
+                      color='k', width=0.01)
 
 cp = plt.contour(X, Y, Z, 15)
 plt.clabel(cp, inline=True, fontsize=10)
 plt.xlabel('x')
 plt.ylabel('y')
 
-for i in range(len(w_hist)):
-    plt.plot(w_hist[i][0], w_hist[i][1], 'k.')
-    if i < len(w_hist) - 1:
-        plt.arrow(w_hist[i][0], w_hist[i][1], w_hist[i + 1][0] -
-                  w_hist[i][0], w_hist[i + 1][1] - w_hist[i][1],
-                  color='r', width=0.01)
+plt.plot(1, 0, 'b*', markersize=15)
+plt.plot([], [], 'r.', label='Gradient descent')
+plt.plot([], [], 'b*', label='Minimum')
+plt.legend()
 
+print("Average number of iterations: ", np.mean(k_hist))
 plt.savefig('plot.png')
 plt.show()
