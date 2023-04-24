@@ -25,19 +25,24 @@ void wypiszWektor(double* v, int n) {
 }
 
 void wypiszZadanie(Zadanie zad) {
-	printf("Zadanie:\n");
-	printf("Wektor rozwiazania x:\n");
+	static int i = 1;
+	printf("\nZadanie %d:\n", i);
+	printf("\nWektor rozwiazania x:\n");
 	wypiszWektor(zad.wynik.x, N);
-	printf("Residuum:\n");
+	printf("\nResiduum:\n");
 	wypiszWektor(zad.wynik.resHist, zad.wynik.iteracje);
-	printf("Czas: %f s\n", zad.wynik.czas);
-	printf("Iteracje: %d", zad.wynik.iteracje);
+	printf("\nCzas: %fs ", zad.wynik.czas);
+	printf("Iteracje: %d\n", zad.wynik.iteracje);
+	zapiszWynik(zad.wynik, i);
+	i++;
 }
 
 double** zbudujMacierz(int n) {
 	double** M = (double**)malloc(n * sizeof(double*));
 	for (int i = 0; i < n; i++) {
-		M[i] = zbudujWektor(n);
+		if (M != NULL) {
+			M[i] = zbudujWektor(n);
+		}
 	}
 	return M;
 }
@@ -45,15 +50,9 @@ double** zbudujMacierz(int n) {
 double* zbudujWektor(int n) {
 	double* W = (double*)malloc(n * sizeof(double));
 	for (int i = 0; i < n; i++) {
-		W[i] = 0;
-	}
-	return W;
-}
-
-double* kopiujWektor(double* v, int n) {
-	double* W = zbudujWektor(n);
-	for (int i = 0; i < n; i++) {
-		W[i] = v[i];
+		if (W != NULL) {
+			W[i] = 0;
+		}
 	}
 	return W;
 }
@@ -79,7 +78,7 @@ void zwolnijZadanie(Zadanie zad) {
 	zwolnijWektor(zad.wynik.x);
 	zwolnijWektor(zad.wynik.resHist);
 	zwolnijMacierz(zad.A, zad.n);
-	zwolnijWektor(zad.b, zad.n);
+	zwolnijWektor(zad.b);
 }
 
 double** zbudujA(double a1, double a2, double a3, int n) {
@@ -111,6 +110,14 @@ double* zbudujB(int n) {
 		B[i] = sin((double)i * (F + 1));
 	}
 	return B;
+}
+
+void start(Zadanie zad, Zadanie (metoda)(Zadanie)) {
+	double czasStartu = clock();
+	Zadanie zadanie = metoda(zad);
+	zadanie.wynik.czas = (clock() - czasStartu) / CLOCKS_PER_SEC;
+	wypiszZadanie(zadanie);
+	zwolnijZadanie(zadanie);
 }
 
 LUD wygenerujLUD(double** M, int n) {
@@ -153,6 +160,7 @@ double* forwardSubstitution(double** L, double* y, int n) {
 
 double* backwardSubstitution(double** U, double* y, int n) {
 	double* x = zbudujWektor(n);
+
 	for (int i = n - 1; i >= 0; i--) {
 		x[i] = y[i];
 		for (int j = i + 1; j < n; j++) {
@@ -161,6 +169,22 @@ double* backwardSubstitution(double** U, double* y, int n) {
 		x[i] /= U[i][i];
 	}
 	return x;
+}
+
+void zapiszWynik(Wynik wynik, int nr) {
+	FILE* plik;
+	char nazwa[20];
+	sprintf(nazwa, "wynik%d.csv", nr);
+	plik = fopen(nazwa, "w");
+
+	if (plik != NULL) {
+		for (int i = 0; i < wynik.iteracje; i++) {
+			fprintf(plik, "%e\n", wynik.resHist[i]);
+		}
+
+		fclose(plik);
+		nr++;
+	}
 }
 
 double norma(double* v, int n) {
