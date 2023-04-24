@@ -48,12 +48,13 @@ void zwolnijZadanie(Zadanie zad);
 
 double** zbudujA(double a, double b, double c, int n);
 double* zbudujB(int n);
-void start(Zadanie zad, Zadanie(metoda)(Zadanie));
+void start(Zadanie zad, Zadanie(metoda)(Zadanie), int nr);
 
 LUD wygenerujLUD(double** M, int n);
 double* forwardSubstitution(double** L, double* y, int n);
 double* backwardSubstitution(double** U, double* y, int n);
 void zapiszWynik(Wynik wynik, int nr);
+void zapiszCzas(Zadanie wynik, int nr);
 
 double norma(double* v, int n);
 

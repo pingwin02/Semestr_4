@@ -24,7 +24,6 @@ Zadanie Jacobi(Zadanie zad) {
 
 	zad.wynik.resHist = zbudujWektor(maxIter);
 	zad.wynik.iteracje = 0;
-	double czasStartu = clock();
 	//x' = -D^-1(L+U)x + D^-1b
 	for (int i = 0; i < maxIter; i++) {
 		zad.wynik.iteracje++;
@@ -75,7 +74,6 @@ Zadanie GaussSiedl(Zadanie zad) {
 
 	zad.wynik.resHist = zbudujWektor(maxIter);
 	zad.wynik.iteracje = 0;
-	double czasStartu = clock();
 	//x' = -(D+L)^-1*(Ux) + (D+L)^-1*b
 	for (int i = 0; i < maxIter; i++) {
 		zad.wynik.iteracje++;
@@ -110,21 +108,25 @@ Zadanie GaussSiedl(Zadanie zad) {
 	return zad;
 }
 
-Zadanie stworzZadanieA() {
+Zadanie faktoryzacjaLU(Zadanie zad) {
+
+}
+
+Zadanie stworzZadanieA(int n) {
 	Zadanie zadA;
-	zadA.A = zbudujA(5 + E, -1, -1, N);
-	zadA.b = zbudujB(N);
-	zadA.n = N;
+	zadA.A = zbudujA(5 + E, -1, -1, n);
+	zadA.b = zbudujB(n);
+	zadA.n = n,
 	zadA.eps = 1e-9;
 	zadA.maxIter = 1000;
 	return zadA;
 }
 
-Zadanie stworzZadanieC() {
+Zadanie stworzZadanieC(int n) {
 	Zadanie zadC;
-	zadC.A = zbudujA(3, -1, -1, N);
-	zadC.b = zbudujB(N);
-	zadC.n = N;
+	zadC.A = zbudujA(3, -1, -1, n);
+	zadC.b = zbudujB(n);
+	zadC.n = n;
 	zadC.eps = 1e-9;
 	zadC.maxIter = 1000;
 
@@ -133,15 +135,33 @@ Zadanie stworzZadanieC() {
 
 void zadanieB() {
 
-	start(stworzZadanieA(), Jacobi);
-	start(stworzZadanieA(), GaussSiedl);
+	start(stworzZadanieA(N), Jacobi, 0);
+	start(stworzZadanieA(N), GaussSiedl, 0);
 
 }
 
 void zadanieC() {
 
-	start(stworzZadanieC(), Jacobi);
-	start(stworzZadanieC(), GaussSiedl);
+	start(stworzZadanieC(N), Jacobi, 0);
+	start(stworzZadanieC(N), GaussSiedl, 0);
+
+}
+
+void zadanieD() {
+	start(stworzZadanieC(N), faktoryzacjaLU, 0);
+}
+
+void zadanieE() {
+	int n[] = {100, 500, 1000, 2000, 3000, 5000, 10000};
+	remove("wynikCzas1.csv");
+	remove("wynikCzas2.csv");
+	remove("wynikCzas3.csv");
+
+	for (int i = 0; i < 7; i++) {
+		printf("n = %d\n", n[i]);
+		start(stworzZadanieA(n[i]), Jacobi, 1);
+		start(stworzZadanieA(n[i]), GaussSiedl, 2);
+	}
 
 }
 
@@ -150,5 +170,6 @@ int main() {
 	srand(time(NULL));
 	zadanieB();
 	zadanieC();
+	zadanieE();
 	return 0;
 }

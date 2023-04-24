@@ -32,7 +32,7 @@ void wypiszZadanie(Zadanie zad) {
 	printf("\nResiduum:\n");
 	wypiszWektor(zad.wynik.resHist, zad.wynik.iteracje);
 	printf("\nCzas: %fs ", zad.wynik.czas);
-	printf("Iteracje: %d\n", zad.wynik.iteracje);
+	printf("Iteracje: %d\n\n", zad.wynik.iteracje);
 	zapiszWynik(zad.wynik, i);
 	i++;
 }
@@ -112,11 +112,16 @@ double* zbudujB(int n) {
 	return B;
 }
 
-void start(Zadanie zad, Zadanie (metoda)(Zadanie)) {
+void start(Zadanie zad, Zadanie (metoda)(Zadanie), int nr) {
 	double czasStartu = clock();
 	Zadanie zadanie = metoda(zad);
 	zadanie.wynik.czas = (clock() - czasStartu) / CLOCKS_PER_SEC;
-	wypiszZadanie(zadanie);
+	if (nr == 0) {
+		wypiszZadanie(zadanie);
+	}
+	else {
+		zapiszCzas(zadanie, nr);
+	}
 	zwolnijZadanie(zadanie);
 }
 
@@ -183,7 +188,18 @@ void zapiszWynik(Wynik wynik, int nr) {
 		}
 
 		fclose(plik);
-		nr++;
+	}
+}
+
+void zapiszCzas(Zadanie zad, int nr) {
+	FILE* plik;
+	char nazwa[20];
+	sprintf(nazwa, "wynikCzas%d.csv", nr);
+	plik = fopen(nazwa, "a");
+
+	if (plik != NULL) {
+		fprintf(plik, "%d, %e\n", zad.n, zad.wynik.czas);
+		fclose(plik);
 	}
 }
 
