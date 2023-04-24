@@ -3,3 +3,5 @@
 html
 .idea
 __pycache__
+Debug
+.vs
