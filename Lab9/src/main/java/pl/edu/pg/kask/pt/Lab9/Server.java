@@ -53,6 +53,8 @@ public class Server {
 
                 out.writeObject("finished");
 
+                System.out.println("Client " + clientId + " disconnected");
+
                 clientSocket.close();
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
