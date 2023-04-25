@@ -3,9 +3,23 @@
 \usepackage{lmodern}
 \usepackage[polish]{babel}
 \usepackage{graphicx}
-\usepackage{float}
 \usepackage{amsmath}
 \usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+\lstdefinestyle{mystyle}{
+    language=C,
+    keywordstyle=\color{blue},
+    identifierstyle=\color{teal},
+    stringstyle=\color{red},
+    commentstyle=\color{gray},
+    showstringspaces=false,
+    frame=single
+}
+
+\lstset{style=mystyle}
 
 \usepackage[a4paper, margin=2.54cm]{geometry}
 
@@ -18,6 +32,8 @@ Implementacja metod Jacobiego, Gaussa-Seidla i LU}
 \begin{document}
 
 \maketitle
+
+\tableofcontents
 
 \section{Wstęp}
 Celem projektu było zaimplementowanie metod Jacobiego, 
@@ -86,52 +102,6 @@ które spełniają warunek:
     \boldsymbol{A = L + U + D}
 \end{equation}
 
-Przykładowo dla macierzy $A$ \eqref{eq:macierzA},
-macierze $L$, $U$ i $D$ wyglądają następująco:
-
-\begin{equation}
-L = \begin{bmatrix}
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
-    a_2 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
-    a_3 & a_2 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
-    0 & a_3 & a_2 & 0 & 0 & 0 & 0 & \dots & 0\\
-    0 & 0 & a_3 & a_2 & 0 & 0 & 0 & \dots & 0\\
-    0 & 0 & 0 & a_3 & a_2 & 0 & 0 & \dots & 0\\
-    0 & 0 & 0 & 0 & a_3 & a_2 & 0 & \dots & 0\\
-    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots\\
-    0 & 0 & \dots & 0 & 0 & 0 & a_3 & a_2 & 0
-\end{bmatrix}
-\end{equation}
-
-\begin{equation}
-U = \begin{bmatrix}
-    0 & a_2 & a_3 & 0 & 0 & 0 & 0 & \dots & 0\\
-    0 & 0 & a_2 & a_3 & 0 & 0 & 0 & \dots & 0\\
-    0 & 0 & 0 & a_2 & a_3 & 0 & 0 & \dots & 0\\
-    0 & 0 & 0 & 0 & a_2 & a_3 & 0 & \dots & 0\\
-    0 & 0 & 0 & 0 & 0 & a_2 & a_3 & \dots & 0\\
-    0 & 0 & 0 & 0 & 0 & 0 & a_2 & \dots & 0\\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
-    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots\\
-    0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & 0
-\end{bmatrix}
-\end{equation}
-
-\begin{equation}
-D = \begin{bmatrix}
-    a_1 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
-    0 & a_1 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
-    0 & 0 & a_1 & 0 & 0 & 0 & 0 & \dots & 0\\
-    0 & 0 & 0 & a_1 & 0 & 0 & 0 & \dots & 0\\
-    0 & 0 & 0 & 0 & a_1 & 0 & 0 & \dots & 0\\
-    0 & 0 & 0 & 0 & 0 & a_1 & 0 & \dots & 0\\
-    0 & 0 & 0 & 0 & 0 & 0 & a_1 & \dots & 0\\
-    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots\\
-    0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & a_1
-\end{bmatrix}
-\end{equation}
-
-
 Warunkiem zakończenia iteracji jest osiągnięcie
 zadanej dokładności lub maksymalnej liczby iteracji.
 \subsubsection{Metoda Jacobiego}
@@ -147,21 +117,183 @@ gdzie:
     \item $\boldsymbol{x^{(k)}}$ - wektor przybliżenia rozwiązania w $k$-tej iteracji
 \end{itemize}
 
-Problemem tej metody jest konieczność wyznaczenia odwrotności macierzy $D$,
-co może być bardzo kosztowne obliczeniowo. Natomiast z racji, że
-macierz $D$ jest diagonalna, to jej odwrotność jest równa odwrotności
-każdego z jej elementów na przekątnej.
-
 \subsubsection{Metoda Gaussa-Seidla}
 
-Metoda Gaussa-Seidla polega na wyznaczeniu kolejnych przybliżeń
-rozwiązania układu równań liniowych zgodnie ze wzorem:
+Metoda Gaussa-Seidla podobnie jak metoda Jacobiego polega 
+na wyznaczeniu kolejnych przybliżeń, jednakże zgodnie z tym wzorem:
 
 \begin{equation}
-    \boldsymbol{x^{(k+1)} = -D^{-1}(L + U)x^{(k+1)} + D^{-1}b}
+    \boldsymbol{x^{(k+1)} = -(D+L)^{-1}Ux^{(k)} + (D+L)^{-1}b}
 \end{equation}
 
+Problemem tej metody jest konieczność wyznaczenia macierzy $(D+L)^{-1}$,
+czego powinno się unikać z racji dużej złożoności obliczeniowej.
 
+Z tego powodu zamiast wyznaczać odwrotność macierzy $D+L$,
+stosuje się tzw. podstawienie w przód (ang. \textit{forward substitution}).
+
+\subsubsection{Podstawienie w przód}
+Metoda podstawienia w przód polega na wyznaczeniu kolejnych
+wartości wektora rozwiązań $\boldsymbol{x}$ układu równań $\boldsymbol{Lx = b}$,
+w następujący sposób:
+
+\begin{equation*}
+    \boldsymbol{x_1 = \frac{b_1}{l_{11}}}
+\end{equation*}
+
+\begin{equation*}
+    \boldsymbol{x_2 = \frac{b_2 - l_{21}x_1}{l_{22}}}
+\end{equation*}
+
+\begin{equation*}
+    \boldsymbol{x_i = \frac{b_i - \sum_{j=1}^{i-1}l_{ij}x_j}{l_{ii}}}
+\end{equation*}
+
+\begin{equation*}
+    \boldsymbol{\vdots}
+\end{equation*}
+
+\begin{equation*}
+    \boldsymbol{x_n = \frac{b_n - \sum_{j=1}^{n-1}l_{nj}x_j}{l_{nn}}}
+\end{equation*}
+
+Koniecznym jest by macierz $\boldsymbol{L}$ była macierzą trójkątną dolną,
+np. w przypadku sumy macierzy $D+L$.
+
+\subsubsection{Podstawienie w tył}
+Metoda podstawienia w tył podobnie jak metoda podstawienia w przód
+polega na wyznaczeniu kolejnych wartości wektora rozwiązań $\boldsymbol{x}$ tym razem
+układu równań $\boldsymbol{Ux = b}$. Jednakże w tym przypadku koniecznym jest
+by macierz $\boldsymbol{U}$ była macierzą trójkątną górną.
+Kolejne kroki wyglądają następująco:
+
+\begin{equation*}
+    \boldsymbol{x_n = \frac{b_n}{u_{nn}}}
+\end{equation*}
+
+\begin{equation*}
+    \boldsymbol{x_{n-1} = \frac{b_{n-1} - u_{n-1,n}x_n}{u_{n-1,n-1}}}
+\end{equation*}
+
+\begin{equation*}
+    \boldsymbol{x_i = \frac{b_i - \sum_{j=i+1}^{n}u_{ij}x_j}{u_{ii}}}
+\end{equation*}
+
+\begin{equation*}
+    \boldsymbol{\vdots}
+\end{equation*}
+
+\begin{equation*}
+    \boldsymbol{x_1 = \frac{b_1 - \sum_{j=2}^{n}u_{1j}x_j}{u_{11}}}
+\end{equation*}
+
+\subsubsection{Warunek zakończenia}
+By sprawdzić czy osiągnięto zadaną dokładność należy przy każdej iteracji
+sprawdzać czy norma tzw. wektora residuum $\boldsymbol{res}$ jest mniejsza 
+od zadanej wartości, np. $10^{-9}$.
+
+Wektor residuum jest zdefiniowany następująco:
+\begin{equation}
+    \boldsymbol{res^{(k)} = Ax^{(k)}-b}
+\end{equation}
+W idealnej sytuacji powinien być równy wektorowi zerowemu.
+
+Natomiast w większości przypadków, by sprawdzić czy osiągnięto zadaną dokładność
+wyznacza się normę wektora residuum $\boldsymbol{res}$:
+
+\begin{equation}
+    \boldsymbol{||res^{(k)}|| = \sqrt{\sum_{i=1}^{n}(res_i^{(k)})^2}}
+\end{equation}
+
+Tym sposobem możemy z góry określić dokładność rozwiązania.
+
+\subsection{Metody bezpośrednie}
+Metody bezpośrednie polegają na wyznaczeniu rozwiązania układu równań
+bezpośrednio z macierzy współczynników $\boldsymbol{A}$. Odznaczają się one
+dużą dokładnością, jednakże są czasochłonne i zasobożerne.
+
+\subsubsection{Metoda faktoryzacji LU}
+
+Metoda faktoryzacji LU polega na rozkładzie macierzy 
+współczynników $\boldsymbol{A}$
+na iloczyn macierzy $\boldsymbol{L}$ i $\boldsymbol{U}$:
+
+\begin{equation}
+    \boldsymbol{A = LU}
+\end{equation}
+gdzie:
+\begin{itemize}
+    \item $\boldsymbol{L}$ - macierz trójkątna dolna
+    \item $\boldsymbol{U}$ - macierz trójkątna górna
+\end{itemize}
+
+Wtedy układ równań $\boldsymbol{Ax = b}$ można zapisać jako:
+
+\begin{equation*}
+    \boldsymbol{LUx = b}
+\end{equation*}
+
+By przejść dalej konieczne jest wyznaczenie potrzebnych macierzy pomocniczych.
+\begin{enumerate}
+    \item Na początku tworzy się macierz $\boldsymbol{L}$, która jest macierzą 
+    jednostkową, czyli taką, której elementy na głównej przekątnej są równe 1.
+    Natomiast macierz $\boldsymbol{U}$ to kopia macierzy $\boldsymbol{A}$.
+    
+    Faktoryzację LU opisać można tym kodem w języku C:
+    
+    \begin{lstlisting}
+        for (int k = 0; k < n - 1; k++) {
+            for (int j = k + 1; j < n; j++) {
+                L[j][k] = U[j][k] / U[k][k];
+                for (int i = k; i < n; i++) {
+                    U[j][i] = U[j][i] - L[j][k] * U[k][i];
+                }
+            }
+        }
+    \end{lstlisting}
+
+    \item Następnie metodą podstawiania w przód wyznacza 
+    się wektor $\boldsymbol{y}$,
+    który jest rozwiązaniem układu równań $\boldsymbol{Ly = b}$.
+
+    \item Ostatnim krokiem jest wyznaczenie wektora rozwiązań $\boldsymbol{x}$,
+    który jest rozwiązaniem układu równań $\boldsymbol{Ux = y}$.
+    Z racji, że macierz $\boldsymbol{U}$ jest macierzą trójkątną górną,
+    to wyznaczenie wektora $\boldsymbol{x}$ jest możliwe metodą 
+    podstawienia w tył.
+\end{enumerate}
+
+\section{Implementacja i analiza wyników}
+\subsection{Zadanie A}
+Zadanie A polegało na zaimplementowaniu układu równań przedstawionego we
+wstępie.
+\subsection{Zadanie B}
+Zadanie B polegało na zaimplementowaniu metod iteracyjnych Jasobiego i 
+Gaussa-Seidla, sprawdzeniu ilość iteracji potrzebnych do zakończenia.
+
+Wyniki zostały przedstawione poniżej.
+
+\begin{center}
+    \begin{tabular}{| c | c | c |} 
+    \hline
+    \multicolumn{3}{|c|}{\shortstack{Tabela 1. Porównanie czasu \\ i ilości iteracji
+    dla zadania A}} \\
+    \hline
+    Metoda & Czas & Ilość iteracji \\ [0.5ex] 
+    \hline
+    Jacobi & 0.12s & 18 \\
+    \hline
+    Gauss-Seidel & 0.094s & 14 \\
+    \hline
+    \end{tabular}
+\end{center}
+
+
+\begin{figure}[H]
+    \includegraphics[width=0.75\textwidth]{zadB.png}
+    \centering
+    \caption{Wykres przedstawiający wartość normy wektora residuum od iteracji}
+\end{figure}
 
 
 \end{document}

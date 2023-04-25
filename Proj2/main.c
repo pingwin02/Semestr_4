@@ -3,6 +3,7 @@
 
 int main() {
 	srand(time(NULL));
+	setbuf(stdout, NULL);
 
 	system("del *.csv");
 
