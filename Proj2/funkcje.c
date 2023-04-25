@@ -113,9 +113,7 @@ double* zbudujB(int n) {
 }
 
 void start(Zadanie zad, Zadanie (metoda)(Zadanie), int nr) {
-	double czasStartu = clock();
 	Zadanie zadanie = metoda(zad);
-	zadanie.wynik.czas = (clock() - czasStartu) / CLOCKS_PER_SEC;
 	if (nr == 0) {
 		wypiszZadanie(zadanie);
 	}
@@ -198,7 +196,7 @@ void zapiszCzas(Zadanie zad, int nr) {
 	plik = fopen(nazwa, "a");
 
 	if (plik != NULL) {
-		fprintf(plik, "%d, %e\n", zad.n, zad.wynik.czas);
+		fprintf(plik, "%d, %e, %d\n", zad.n, zad.wynik.czas, zad.wynik.iteracje);
 		fclose(plik);
 	}
 }

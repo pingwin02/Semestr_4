@@ -43,3 +43,13 @@ ylabel("Czas (s)")
 title("Czas wykonania algorytmów dla zadania E")
 legend('Metoda Jacobiego', 'Metoda Gaussa-Seidla')
 saveas(gcf, "zadE.png")
+
+plot(czasJacobi(:,1), czasJacobi(:,3), 'LineWidth', 2)
+hold on
+plot(czasGauss(:,1), czasGauss(:,3), 'LineWidth', 2)
+hold off
+xlabel("Wielkość macierzy (N)")
+ylabel("Ilość")
+title("Ilość iteracji dla zadania E")
+legend('Metoda Jacobiego', 'Metoda Gaussa-Seidla')
+saveas(gcf, "zadE_iter.png")

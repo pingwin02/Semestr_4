@@ -24,6 +24,9 @@ Zadanie Jacobi(Zadanie zad) {
 
 	zad.wynik.resHist = zbudujWektor(maxIter);
 	zad.wynik.iteracje = 0;
+
+	zad.wynik.czas = clock();
+
 	//x' = -D^-1(L+U)x + D^-1b
 	for (int i = 0; i < maxIter; i++) {
 		zad.wynik.iteracje++;
@@ -48,6 +51,8 @@ Zadanie Jacobi(Zadanie zad) {
 			break;
 		}
 	}
+
+	zad.wynik.czas = (clock() - zad.wynik.czas) / CLOCKS_PER_SEC;
 
 	zad.wynik.x = x;
 	zwolnijMacierz(czesc1, n);
@@ -74,6 +79,9 @@ Zadanie GaussSiedl(Zadanie zad) {
 
 	zad.wynik.resHist = zbudujWektor(maxIter);
 	zad.wynik.iteracje = 0;
+
+	zad.wynik.czas = clock();
+
 	//x' = -(D+L)^-1*(Ux) + (D+L)^-1*b
 	for (int i = 0; i < maxIter; i++) {
 		zad.wynik.iteracje++;
@@ -98,6 +106,8 @@ Zadanie GaussSiedl(Zadanie zad) {
 			break;
 		}
 	}
+
+	zad.wynik.czas = (clock() - zad.wynik.czas) / CLOCKS_PER_SEC;
 
 	zad.wynik.x = x;
 	zwolnijMacierz(czesc1, n);
