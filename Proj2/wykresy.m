@@ -2,8 +2,8 @@ clc
 clear all
 close all
 
-wynikJacobi = readmatrix("wynik1.csv");
-wynikGauss = readmatrix("wynik2.csv");
+wynikJacobi = readmatrix("res1.csv");
+wynikGauss = readmatrix("res2.csv");
 
 semilogy(wynikJacobi, 'LineWidth', 2)
 hold on
@@ -16,8 +16,8 @@ title("Wartość normy błędu rezydualnego dla zadania B")
 legend('Metoda Jacobiego', 'Metoda Gaussa-Seidla')
 saveas(gcf, "zadB.png")
 
-wynikJacobi = readmatrix("wynik3.csv");
-wynikGauss = readmatrix("wynik4.csv");
+wynikJacobi = readmatrix("res3.csv");
+wynikGauss = readmatrix("res4.csv");
 
 semilogy(wynikJacobi, 'LineWidth', 2)
 hold on
@@ -31,8 +31,8 @@ legend('Metoda Jacobiego', 'Metoda Gaussa-Seidla')
 saveas(gcf, "zadC.png")
 
 
-czasJacobi = readmatrix("wynikCzas1.csv");
-czasGauss = readmatrix("wynikCzas2.csv");
+czasJacobi = readmatrix("wynik1.csv");
+czasGauss = readmatrix("wynik2.csv");
 
 plot(czasJacobi(:,1), czasJacobi(:,2), 'LineWidth', 2)
 hold on

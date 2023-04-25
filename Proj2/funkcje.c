@@ -1,5 +1,9 @@
 #include "funkcje.h"
 
+double wyznaczCzas(double start) {
+	return (clock() - start) / CLOCKS_PER_SEC;
+}
+
 void wypiszMacierz(double** M, int n) {
 
 	printf("Macierz %d x %d:\n", n, n);
@@ -26,14 +30,11 @@ void wypiszWektor(double* v, int n) {
 
 void wypiszZadanie(Zadanie zad) {
 	static int i = 1;
-	printf("\nZadanie %d:\n", i);
 	printf("\nWektor rozwiazania x:\n");
 	wypiszWektor(zad.wynik.x, N);
 	printf("\nResiduum:\n");
 	wypiszWektor(zad.wynik.resHist, zad.wynik.iteracje);
-	printf("\nCzas: %fs ", zad.wynik.czas);
-	printf("Iteracje: %d\n\n", zad.wynik.iteracje);
-	zapiszWynik(zad.wynik, i);
+	zapiszRes(zad, i);
 	i++;
 }
 
@@ -42,6 +43,24 @@ double** zbudujMacierz(int n) {
 	for (int i = 0; i < n; i++) {
 		if (M != NULL) {
 			M[i] = zbudujWektor(n);
+		}
+	}
+	return M;
+}
+
+double** zbudujMacierzJednostkowa(int n) {
+	double** M = zbudujMacierz(n);
+	for (int i = 0; i < n; i++) {
+		M[i][i] = 1;
+	}
+	return M;
+}
+
+double** kopiujMacierz(double** A, int n) {
+	double** M = zbudujMacierz(n);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			M[i][j] = A[i][j];
 		}
 	}
 	return M;
@@ -112,15 +131,19 @@ double* zbudujB(int n) {
 	return B;
 }
 
-void start(Zadanie zad, Zadanie (metoda)(Zadanie), int nr) {
-	Zadanie zadanie = metoda(zad);
+void start(Zadanie zad, void (metoda)(Zadanie*), int nr) {
+	printf("\nZadanie %c (%dx%d) start:\n", zad.litera, zad.n, zad.n);
+	metoda(&zad);
 	if (nr == 0) {
-		wypiszZadanie(zadanie);
+		wypiszZadanie(zad);
 	}
 	else {
-		zapiszCzas(zadanie, nr);
+		zapiszCzas(zad, nr);
 	}
-	zwolnijZadanie(zadanie);
+	printf("\nCzas: %fs ", zad.wynik.czas);
+	printf("Iteracje: %d\n", zad.wynik.iteracje);
+	printf("\nZadanie %c koniec.\n", zad.litera);
+	zwolnijZadanie(zad);
 }
 
 LUD wygenerujLUD(double** M, int n) {
@@ -174,15 +197,15 @@ double* backwardSubstitution(double** U, double* y, int n) {
 	return x;
 }
 
-void zapiszWynik(Wynik wynik, int nr) {
+void zapiszRes(Zadanie zad, int nr) {
 	FILE* plik;
 	char nazwa[20];
-	sprintf(nazwa, "wynik%d.csv", nr);
+	sprintf(nazwa, "res%c%d.csv", zad.litera, nr);
 	plik = fopen(nazwa, "w");
 
 	if (plik != NULL) {
-		for (int i = 0; i < wynik.iteracje; i++) {
-			fprintf(plik, "%e\n", wynik.resHist[i]);
+		for (int i = 0; i < zad.wynik.iteracje; i++) {
+			fprintf(plik, "%e\n", zad.wynik.resHist[i]);
 		}
 
 		fclose(plik);
@@ -192,7 +215,7 @@ void zapiszWynik(Wynik wynik, int nr) {
 void zapiszCzas(Zadanie zad, int nr) {
 	FILE* plik;
 	char nazwa[20];
-	sprintf(nazwa, "wynikCzas%d.csv", nr);
+	sprintf(nazwa, "wynik%c%d.csv", zad.litera, nr);
 	plik = fopen(nazwa, "a");
 
 	if (plik != NULL) {

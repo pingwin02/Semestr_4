@@ -31,14 +31,19 @@ struct Zadanie {
 	int n;
 	double eps;
 	int maxIter;
+	char litera;
 	Wynik wynik;
 } typedef Zadanie;
+
+double wyznaczCzas(double start);
 
 void wypiszMacierz(double** M, int n);
 void wypiszWektor(double* v, int n);
 void wypiszZadanie(Zadanie zad);
 
 double** zbudujMacierz(int n);
+double** zbudujMacierzJednostkowa(int n);
+double** kopiujMacierz(double** A, int n);
 double* zbudujWektor(int n);
 
 void zwolnijWektor(double* v);
@@ -48,13 +53,13 @@ void zwolnijZadanie(Zadanie zad);
 
 double** zbudujA(double a, double b, double c, int n);
 double* zbudujB(int n);
-void start(Zadanie zad, Zadanie(metoda)(Zadanie), int nr);
+void start(Zadanie zad, void(metoda)(Zadanie*), int nr);
 
 LUD wygenerujLUD(double** M, int n);
 double* forwardSubstitution(double** L, double* y, int n);
 double* backwardSubstitution(double** U, double* y, int n);
-void zapiszWynik(Wynik wynik, int nr);
-void zapiszCzas(Zadanie wynik, int nr);
+void zapiszRes(Zadanie zad, int nr);
+void zapiszCzas(Zadanie zad, int nr);
 
 double norma(double* v, int n);
 
