@@ -8,11 +8,11 @@ void Jacobi(Zadanie* zad) {
 	double** A = zad->A;
 	double* b = zad->b;
 
-	LUD lud = wygenerujLUD(zad->A, n);
+	LUD lud = wygenerujLUD(A, n);
 	//czesc1 = L+U
 	double** czesc1 = sumaMacierzy(lud.L, lud.U, n);
 	//czesc2 = D^-1b
-	double* czesc2 = forwardSubstitution(lud.D, zad->b, n);
+	double* czesc2 = forwardSubstitution(lud.D, b, n);
 	//negD = -D
 	double** negD = neg(lud.D, n);
 
@@ -27,13 +27,13 @@ void Jacobi(Zadanie* zad) {
 		iteracje++;
 		//ilo1 = (L+U)x
 		double* ilo1 = iloczynMacierzWektor(czesc1, x, n);
-		//frwSub = -D^-1(ilo1)
+		//frwSub = -D^-1(L+U)x
 		double* frwSub = forwardSubstitution(negD, ilo1, n);
-		//nowyX = frwSub + D^-1b
+		//nowyX = -D^-1(L+U)x + D^-1b
 		double* nowyX = sumaWektorow(frwSub, czesc2, n);
 		//ilo2 = Ax
 		double* ilo2 = iloczynMacierzWektor(A, nowyX, n);
-		//y = ilo2 - b
+		//y = Ax - b
 		double* y = roznicaWektorow(ilo2, b, n);
 		resHist[i] = norma(y, n);
 		zwolnijWektor(x);
@@ -66,7 +66,7 @@ void GaussSeidel(Zadanie* zad) {
 	double** A = zad->A;
 	double* b = zad->b;
 
-	LUD lud = wygenerujLUD(zad->A, n);
+	LUD lud = wygenerujLUD(A, n);
 	//czesc1 = D+L
 	double** czesc1 = sumaMacierzy(lud.D, lud.L, n);
 	//czesc2 = (D+L)^-1*b
@@ -87,11 +87,11 @@ void GaussSeidel(Zadanie* zad) {
 		double* ilo1 = iloczynMacierzWektor(lud.U, x, n);
 		//frwSub = -(D+L)^-1*(Ux)
 		double* frwSub = forwardSubstitution(negDL, ilo1, n);
-		//nowyX = frwSub + (D+L)^-1*b
+		//nowyX = -(D+L)^-1*(Ux) + (D+L)^-1*b
 		double* nowyX = sumaWektorow(frwSub, czesc2, n);
 		//ilo2 = Ax
 		double* ilo2 = iloczynMacierzWektor(A, nowyX, n);
-		//y = ilo2 - b
+		//y = Ax - b
 		double* y = roznicaWektorow(ilo2, b, n);
 		resHist[i] = norma(y, n);
 		zwolnijWektor(x);
@@ -124,7 +124,7 @@ void faktoryzacjaLU(Zadanie* zad) {
 	double* b = zad->b;
 
 	double** L = zbudujMacierzJednostkowa(n);
-	double** U = kopiujMacierz(A, zad->n);
+	double** U = kopiujMacierz(A, n);
 
 	double czas = clock();
 
@@ -186,14 +186,14 @@ Zadanie stworzZadanieC(int n) {
 void zadanieB() {
 
 	start(stworzZadanieA(N), Jacobi, "Jacobi");
-	start(stworzZadanieA(N), GaussSeidel, "GaussSiedl");
+	start(stworzZadanieA(N), GaussSeidel, "GaussSeidel");
 
 }
 
 void zadanieC() {
 
 	start(stworzZadanieC(N), Jacobi, "Jacobi");
-	start(stworzZadanieC(N), GaussSeidel, "GaussSiedl");
+	start(stworzZadanieC(N), GaussSeidel, "GaussSeidel");
 
 }
 
@@ -206,9 +206,9 @@ void zadanieE() {
 
 	for (int i = 0; i < 9; i++) {
 		startSeria(stworzZadanieA(n[i]), Jacobi, "Jacobi");
-		startSeria(stworzZadanieA(n[i]), GaussSeidel, "GaussSiedl");
+		startSeria(stworzZadanieA(n[i]), GaussSeidel, "GaussSeidel");
 
-		if (n[i] <= 5000)
+		if (n[i] <= 3000)
 			startSeria(stworzZadanieA(n[i]), faktoryzacjaLU, "LU");
 	}
 

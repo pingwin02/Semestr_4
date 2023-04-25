@@ -1,0 +1,167 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[polish]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\usepackage[a4paper, margin=2.54cm]{geometry}
+
+
+\title{Sprawozdanie - Projekt 2\\Układy równań liniowych\\
+Implementacja metod Jacobiego, Gaussa-Seidla i LU}
+\author{Damian Jankowski s188597}
+\date{27 kwietnia 2023}
+
+\begin{document}
+
+\maketitle
+
+\section{Wstęp}
+Celem projektu było zaimplementowanie metod Jacobiego, 
+Gaussa-Seidla i LU oraz porównanie wydajności,
+dokładności, jak również czasu ich wykonania.
+
+Każda z metod w różny sposób rozwiązuje pewien układ równań liniowych:
+
+\begin{equation} 
+    \boldsymbol{Ax = b}
+\end{equation} 
+gdzie: 
+\begin{itemize}
+    \item $\boldsymbol{A}$ -- macierz kwadratowa zawierająca współczynniki układu równań,
+    \item $\boldsymbol{b}$ -- wektor wyrazów wolnych, 
+    \item $\boldsymbol{x}$ -- wektor rozwiązań układu.
+\end{itemize}
+
+Macierz $A$ została zdefiniowana jako macierz pasmowa o rozmiarze $997 \times 997$:
+
+\begin{equation} \label{eq:macierzA}
+A = \begin{bmatrix}
+    a_1 & a_2 & a_3 & 0 & 0 & 0 & 0 & \dots & 0\\
+    a_2 & a_1 & a_2 & a_3 & 0 & 0 & 0 & \dots & 0\\
+    a_3 & a_2 & a_1 & a_2 & a_3 & 0 & 0 & \dots & 0\\
+    0 & a_3 & a_2 & a_1 & a_2 & a_3 & 0 & \dots & 0\\
+    0 & 0 & a_3 & a_2 & a_1 & a_2 & a_3 & \dots & 0\\
+    0 & 0 & 0 & a_3 & a_2 & a_1 & a_2 & \dots & 0\\
+    0 & 0 & 0 & 0 & a_3 & a_2 & a_1 & \dots & 0\\
+    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots\\
+    0 & 0 & \dots & 0 & 0 & 0 & a_3 & a_2 & a_1
+\end{bmatrix}
+\end{equation}
+gdzie:
+\begin{equation*}
+a_1 = 10, \quad a_2 = -1, \quad a_3 = -1
+\end{equation*}
+
+Wektor $b$ długości $997$ został zdefiniowany jako:
+
+\begin{equation}
+b = \begin{bmatrix}
+    sin(0 \cdot (f + 1))\\
+    sin(1 \cdot (f + 1))\\
+    sin(2 \cdot (f + 1))\\
+    \vdots\\
+    sin(996 \cdot (f + 1))
+\end{bmatrix} \quad f = 8
+\end{equation}
+
+\section{Metody rozwiązywania układów równań liniowych}
+Istnieje wiele metod rozwiązywania układów równań liniowych. 
+W projekcie zostały zaimplementowane trzy z nich: metoda Jacobiego, Gaussa-Seidla i LU.
+
+Pierwsze dwa należą do grupy metod iteracyjnych, 
+natomiast ostatnia jest metodą bezpośrednią.
+
+\subsection{Metody iteracyjne}
+Metody iteracyjne polegają na wyznaczeniu 
+kolejnych przybliżeń rozwiązania układu równań liniowych.
+
+Korzystają one z tzw. macierzy: trójkątnej dolnej (\textit{Lower}) $L$, 
+górnej (\textit{Upper}) $U$ oraz diagonalnej $D$,
+które spełniają warunek:
+\begin{equation}
+    \boldsymbol{A = L + U + D}
+\end{equation}
+
+Przykładowo dla macierzy $A$ \eqref{eq:macierzA},
+macierze $L$, $U$ i $D$ wyglądają następująco:
+
+\begin{equation}
+L = \begin{bmatrix}
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
+    a_2 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
+    a_3 & a_2 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
+    0 & a_3 & a_2 & 0 & 0 & 0 & 0 & \dots & 0\\
+    0 & 0 & a_3 & a_2 & 0 & 0 & 0 & \dots & 0\\
+    0 & 0 & 0 & a_3 & a_2 & 0 & 0 & \dots & 0\\
+    0 & 0 & 0 & 0 & a_3 & a_2 & 0 & \dots & 0\\
+    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots\\
+    0 & 0 & \dots & 0 & 0 & 0 & a_3 & a_2 & 0
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+U = \begin{bmatrix}
+    0 & a_2 & a_3 & 0 & 0 & 0 & 0 & \dots & 0\\
+    0 & 0 & a_2 & a_3 & 0 & 0 & 0 & \dots & 0\\
+    0 & 0 & 0 & a_2 & a_3 & 0 & 0 & \dots & 0\\
+    0 & 0 & 0 & 0 & a_2 & a_3 & 0 & \dots & 0\\
+    0 & 0 & 0 & 0 & 0 & a_2 & a_3 & \dots & 0\\
+    0 & 0 & 0 & 0 & 0 & 0 & a_2 & \dots & 0\\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
+    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots\\
+    0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & 0
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+D = \begin{bmatrix}
+    a_1 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
+    0 & a_1 & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
+    0 & 0 & a_1 & 0 & 0 & 0 & 0 & \dots & 0\\
+    0 & 0 & 0 & a_1 & 0 & 0 & 0 & \dots & 0\\
+    0 & 0 & 0 & 0 & a_1 & 0 & 0 & \dots & 0\\
+    0 & 0 & 0 & 0 & 0 & a_1 & 0 & \dots & 0\\
+    0 & 0 & 0 & 0 & 0 & 0 & a_1 & \dots & 0\\
+    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots\\
+    0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & a_1
+\end{bmatrix}
+\end{equation}
+
+
+Warunkiem zakończenia iteracji jest osiągnięcie
+zadanej dokładności lub maksymalnej liczby iteracji.
+\subsubsection{Metoda Jacobiego}
+
+Metoda Jacobiego polega na wyznaczeniu kolejnych przybliżeń
+rozwiązania układu równań liniowych zgodnie ze wzorem:
+
+\begin{equation}
+    \boldsymbol{x^{(k+1)} = -D^{-1}(L + U)x^{(k)} + D^{-1}b}
+\end{equation}
+gdzie:
+\begin{itemize}
+    \item $\boldsymbol{x^{(k)}}$ - wektor przybliżenia rozwiązania w $k$-tej iteracji
+\end{itemize}
+
+Problemem tej metody jest konieczność wyznaczenia odwrotności macierzy $D$,
+co może być bardzo kosztowne obliczeniowo. Natomiast z racji, że
+macierz $D$ jest diagonalna, to jej odwrotność jest równa odwrotności
+każdego z jej elementów na przekątnej.
+
+\subsubsection{Metoda Gaussa-Seidla}
+
+Metoda Gaussa-Seidla polega na wyznaczeniu kolejnych przybliżeń
+rozwiązania układu równań liniowych zgodnie ze wzorem:
+
+\begin{equation}
+    \boldsymbol{x^{(k+1)} = -D^{-1}(L + U)x^{(k+1)} + D^{-1}b}
+\end{equation}
+
+
+
+
+\end{document}

@@ -20,7 +20,7 @@ void wypiszWektor(double* v, int n) {
 	printf("Wektor %d x 1:\n", n);
 	for (int i = 0; i < n; i++) {
 		printf("%e ", v[i]);
-		if (i > 5) {
+		if (i > 4) {
 			printf("...");
 			break;
 		}

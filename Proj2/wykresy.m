@@ -1,29 +1,9 @@
-
-N = 997;
-
-e = 5;
-a1 = 3;
-a2 = -1;
-a3 = -1;
-on = ones(N, 1);
-
-A = spdiags([a3*on a2*on a1*on a2*on a3*on], -2:2, N, N);
-
-b = zeros(N, 1);
-for i=0:N-1
-     b(i+1) = sin(i * 9);
-end
-
-b;
-
-x = A\b;
-
 clc
 clear all
 close all
 
 normJacobi = readmatrix("normaResA_Jacobi.csv");
-normGauss = readmatrix("normaResA_GaussSiedl.csv");
+normGauss = readmatrix("normaResA_GaussSeidel.csv");
 
 semilogy(normJacobi, 'LineWidth', 2)
 hold on
@@ -37,7 +17,7 @@ legend('Metoda Jacobiego', 'Metoda Gaussa-Seidla')
 saveas(gcf, "zadB.png")
 
 normJacobi = readmatrix("normaResC_Jacobi.csv");
-normGauss = readmatrix("normaResC_GaussSiedl.csv");
+normGauss = readmatrix("normaResC_GaussSeidel.csv");
 
 semilogy(normJacobi, 'LineWidth', 2)
 hold on
@@ -52,7 +32,7 @@ saveas(gcf, "zadC.png")
 
 
 czasJacobi = readmatrix("wynikA_Jacobi.csv");
-czasGauss = readmatrix("wynikA_GaussSiedl.csv");
+czasGauss = readmatrix("wynikA_GaussSeidel.csv");
 czasLU = readmatrix("wynikA_LU.csv");
 
 plot(czasJacobi(:,1), czasJacobi(:,2), 'LineWidth', 2)
