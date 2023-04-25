@@ -53,13 +53,14 @@ void zwolnijZadanie(Zadanie zad);
 
 double** zbudujA(double a, double b, double c, int n);
 double* zbudujB(int n);
-void start(Zadanie zad, void(metoda)(Zadanie*), int nr);
+void start(Zadanie zad, void(metoda)(Zadanie*), char* nazwa);
+void startSeria(Zadanie zad, void (metoda)(Zadanie*), char* nazwa);
 
 LUD wygenerujLUD(double** M, int n);
 double* forwardSubstitution(double** L, double* y, int n);
 double* backwardSubstitution(double** U, double* y, int n);
-void zapiszRes(Zadanie zad, int nr);
-void zapiszCzas(Zadanie zad, int nr);
+void zapiszZadanie(Zadanie zad, char* nazwa);
+void zapiszCzas(Zadanie zad, char* nazwa);
 
 double norma(double* v, int n);
 
@@ -71,7 +72,6 @@ double* iloczynMacierzWektor(double** A, double* v, int n);
 double* sumaWektorow(double* v1, double* v2, int n);
 double* roznicaWektorow(double* v1, double* v2, int n);
 
-double* iloczynMacierzWektor(double** A, double* v, int n);
 double** neg(double** A, int n);
 
 #endif

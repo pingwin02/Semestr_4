@@ -29,13 +29,12 @@ void wypiszWektor(double* v, int n) {
 }
 
 void wypiszZadanie(Zadanie zad) {
-	static int i = 1;
 	printf("\nWektor rozwiazania x:\n");
 	wypiszWektor(zad.wynik.x, N);
-	printf("\nResiduum:\n");
+	printf("\nWektor normy residuum:\n");
 	wypiszWektor(zad.wynik.resHist, zad.wynik.iteracje);
-	zapiszRes(zad, i);
-	i++;
+	printf("\nCzas: %fs ", zad.wynik.czas);
+	printf("Iteracje: %d\n", zad.wynik.iteracje);
 }
 
 double** zbudujMacierz(int n) {
@@ -131,18 +130,20 @@ double* zbudujB(int n) {
 	return B;
 }
 
-void start(Zadanie zad, void (metoda)(Zadanie*), int nr) {
-	printf("\nZadanie %c (%dx%d) start:\n", zad.litera, zad.n, zad.n);
+void start(Zadanie zad, void (metoda)(Zadanie*), char* nazwa) {
+	printf("\nZadanie %c (%dx%d):\n", zad.litera, zad.n, zad.n);
 	metoda(&zad);
-	if (nr == 0) {
-		wypiszZadanie(zad);
-	}
-	else {
-		zapiszCzas(zad, nr);
-	}
+	wypiszZadanie(zad);
+	zapiszZadanie(zad, nazwa);
+	zwolnijZadanie(zad);
+}
+
+void startSeria(Zadanie zad, void (metoda)(Zadanie*), char* nazwa) {
+	printf("\nZadanie %c (%dx%d) metoda %s:\n", zad.litera, zad.n, zad.n, nazwa);
+	metoda(&zad);
 	printf("\nCzas: %fs ", zad.wynik.czas);
 	printf("Iteracje: %d\n", zad.wynik.iteracje);
-	printf("\nZadanie %c koniec.\n", zad.litera);
+	zapiszCzas(zad, nazwa);
 	zwolnijZadanie(zad);
 }
 
@@ -197,11 +198,12 @@ double* backwardSubstitution(double** U, double* y, int n) {
 	return x;
 }
 
-void zapiszRes(Zadanie zad, int nr) {
+void zapiszZadanie(Zadanie zad, char* nazwa) {
 	FILE* plik;
-	char nazwa[20];
-	sprintf(nazwa, "res%c%d.csv", zad.litera, nr);
-	plik = fopen(nazwa, "w");
+	char nazwaPliku[50];
+
+	sprintf(nazwaPliku, "normaRes%c_%s.csv", zad.litera, nazwa);
+	plik = fopen(nazwaPliku, "w");
 
 	if (plik != NULL) {
 		for (int i = 0; i < zad.wynik.iteracje; i++) {
@@ -212,11 +214,11 @@ void zapiszRes(Zadanie zad, int nr) {
 	}
 }
 
-void zapiszCzas(Zadanie zad, int nr) {
+void zapiszCzas(Zadanie zad, char* nazwa) {
 	FILE* plik;
-	char nazwa[20];
-	sprintf(nazwa, "wynik%c%d.csv", zad.litera, nr);
-	plik = fopen(nazwa, "a");
+	char nazwaPliku[50];
+	sprintf(nazwaPliku, "wynik%c_%s.csv", zad.litera, nazwa);
+	plik = fopen(nazwaPliku, "a");
 
 	if (plik != NULL) {
 		fprintf(plik, "%d, %e, %d\n", zad.n, zad.wynik.czas, zad.wynik.iteracje);

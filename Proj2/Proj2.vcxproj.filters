@@ -21,9 +21,15 @@
     <ClCompile Include="funkcje.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="metody.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="funkcje.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="metody.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
