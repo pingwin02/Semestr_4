@@ -1,26 +1,33 @@
 #include "funkcje.h"
 
-double wyznaczCzas(double start) {
+double wyznaczCzas(double start)
+{
 	return (clock() - start) / CLOCKS_PER_SEC;
 }
 
-void wypiszMacierz(double** M, int n) {
+void wypiszMacierz(double **M, int n)
+{
 
 	printf("Macierz %d x %d:\n", n, n);
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
 			printf("%e ", M[i][j]);
 		}
 		printf("\n");
 	}
 }
 
-void wypiszWektor(double* v, int n) {
+void wypiszWektor(double *v, int n)
+{
 
 	printf("Wektor %d x 1:\n", n);
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++)
+	{
 		printf("%e ", v[i]);
-		if (i > 4) {
+		if (i > 4)
+		{
 			printf("...");
 			break;
 		}
@@ -28,93 +35,116 @@ void wypiszWektor(double* v, int n) {
 	printf("\n");
 }
 
-void wypiszZadanie(Zadanie zad) {
+void wypiszZadanie(Zadanie zad)
+{
 	printf("\nWektor rozwiazania x:\n");
-	wypiszWektor(zad.wynik.x, N);
+	wypiszWektor(zad.wynik.x, zad.n);
 	printf("\nWektor normy residuum:\n");
 	wypiszWektor(zad.wynik.resHist, zad.wynik.iteracje);
 	printf("\nCzas: %fs ", zad.wynik.czas);
 	printf("Iteracje: %d\n", zad.wynik.iteracje);
 }
 
-double** zbudujMacierz(int n) {
-	double** M = (double**)malloc(n * sizeof(double*));
-	for (int i = 0; i < n; i++) {
-		if (M != NULL) {
+double **zbudujMacierz(int n)
+{
+	double **M = (double **)malloc(n * sizeof(double *));
+	for (int i = 0; i < n; i++)
+	{
+		if (M != NULL)
+		{
 			M[i] = zbudujWektor(n);
 		}
 	}
 	return M;
 }
 
-double** zbudujMacierzJednostkowa(int n) {
-	double** M = zbudujMacierz(n);
-	for (int i = 0; i < n; i++) {
+double **zbudujMacierzJednostkowa(int n)
+{
+	double **M = zbudujMacierz(n);
+	for (int i = 0; i < n; i++)
+	{
 		M[i][i] = 1;
 	}
 	return M;
 }
 
-double** kopiujMacierz(double** A, int n) {
-	double** M = zbudujMacierz(n);
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
+double **kopiujMacierz(double **A, int n)
+{
+	double **M = zbudujMacierz(n);
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
 			M[i][j] = A[i][j];
 		}
 	}
 	return M;
 }
 
-double* zbudujWektor(int n) {
-	double* W = (double*)malloc(n * sizeof(double));
-	for (int i = 0; i < n; i++) {
-		if (W != NULL) {
+double *zbudujWektor(int n)
+{
+	double *W = (double *)malloc(n * sizeof(double));
+	for (int i = 0; i < n; i++)
+	{
+		if (W != NULL)
+		{
 			W[i] = 0;
 		}
 	}
 	return W;
 }
 
-void zwolnijWektor(double* v) {
+void zwolnijWektor(double *v)
+{
 	free(v);
 }
 
-void zwolnijMacierz(double** A, int n) {
-	for (int i = 0; i < n; i++) {
+void zwolnijMacierz(double **A, int n)
+{
+	for (int i = 0; i < n; i++)
+	{
 		zwolnijWektor(A[i]);
 	}
 	free(A);
 }
 
-void zwolnijLUD(LUD lud, int n) {
+void zwolnijLUD(LUD lud, int n)
+{
 	zwolnijMacierz(lud.L, n);
 	zwolnijMacierz(lud.U, n);
 	zwolnijMacierz(lud.D, n);
 }
 
-void zwolnijZadanie(Zadanie zad) {
+void zwolnijZadanie(Zadanie zad)
+{
 	zwolnijWektor(zad.wynik.x);
 	zwolnijWektor(zad.wynik.resHist);
 	zwolnijMacierz(zad.A, zad.n);
 	zwolnijWektor(zad.b);
 }
 
-double** zbudujA(double a1, double a2, double a3, int n) {
+double **zbudujA(double a1, double a2, double a3, int n)
+{
 
-	double** A = zbudujMacierz(n);
+	double **A = zbudujMacierz(n);
 
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++)
+	{
 		A[i][i] = a1;
-		if (i > 0) {
+		if (i > 0)
+		{
 			A[i][i - 1] = a2;
 		}
-		if (i < n - 1) {
+		if (i < n - 1)
+		{
 			A[i][i + 1] = a3;
 		}
-		if (i > 1) {
+		if (i > 1)
+		{
 			A[i][i - 2] = a2;
 		}
-		if (i < n - 2) {
+		if (i < n - 2)
+		{
 			A[i][i + 2] = a3;
 		}
 	}
@@ -122,47 +152,48 @@ double** zbudujA(double a1, double a2, double a3, int n) {
 	return A;
 }
 
-double* zbudujB(int n) {
-	double* B = zbudujWektor(n);
-	for (int i = 0; i < n; i++) {
+double *zbudujB(int n)
+{
+	double *B = zbudujWektor(n);
+	for (int i = 0; i < n; i++)
+	{
 		B[i] = sin((double)i * (F + 1));
 	}
 	return B;
 }
 
-void start(Zadanie zad, void (metoda)(Zadanie*), char* nazwa) {
-	printf("\nZadanie %c (%dx%d):\n", zad.litera, zad.n, zad.n);
-	metoda(&zad);
-	wypiszZadanie(zad);
-	zapiszZadanie(zad, nazwa);
-	zwolnijZadanie(zad);
-}
-
-void startSeria(Zadanie zad, void (metoda)(Zadanie*), char* nazwa) {
+void start(Zadanie zad, void(metoda)(Zadanie *), char *nazwa)
+{
 	printf("\nZadanie %c (%dx%d) metoda %s:\n", zad.litera, zad.n, zad.n, nazwa);
 	metoda(&zad);
-	printf("\nCzas: %fs ", zad.wynik.czas);
-	printf("Iteracje: %d\n", zad.wynik.iteracje);
+	wypiszZadanie(zad);
 	zapiszCzas(zad, nazwa);
+	zapiszNorme(zad, nazwa);
 	zwolnijZadanie(zad);
 }
 
-LUD wygenerujLUD(double** M, int n) {
+LUD wygenerujLUD(double **M, int n)
+{
 	LUD lud;
 
 	lud.L = zbudujMacierz(n);
 	lud.U = zbudujMacierz(n);
 	lud.D = zbudujMacierz(n);
 
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			if (i == j) {
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (i == j)
+			{
 				lud.D[i][j] = M[i][j];
 			}
-			if (i > j) {
+			if (i > j)
+			{
 				lud.L[i][j] = M[i][j];
 			}
-			if (i < j) {
+			if (i < j)
+			{
 				lud.U[i][j] = M[i][j];
 			}
 		}
@@ -171,12 +202,15 @@ LUD wygenerujLUD(double** M, int n) {
 	return lud;
 }
 
-double* forwardSubstitution(double** L, double* y, int n) {
-	double* x = zbudujWektor(n);
+double *forwardSubstitution(double **L, double *y, int n)
+{
+	double *x = zbudujWektor(n);
 
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++)
+	{
 		x[i] = y[i];
-		for (int j = 0; j < i; j++) {
+		for (int j = 0; j < i; j++)
+		{
 			x[i] -= L[i][j] * x[j];
 		}
 		x[i] /= L[i][i];
@@ -185,12 +219,15 @@ double* forwardSubstitution(double** L, double* y, int n) {
 	return x;
 }
 
-double* backwardSubstitution(double** U, double* y, int n) {
-	double* x = zbudujWektor(n);
+double *backwardSubstitution(double **U, double *y, int n)
+{
+	double *x = zbudujWektor(n);
 
-	for (int i = n - 1; i >= 0; i--) {
+	for (int i = n - 1; i >= 0; i--)
+	{
 		x[i] = y[i];
-		for (int j = i + 1; j < n; j++) {
+		for (int j = i + 1; j < n; j++)
+		{
 			x[i] -= U[i][j] * x[j];
 		}
 		x[i] /= U[i][i];
@@ -198,15 +235,18 @@ double* backwardSubstitution(double** U, double* y, int n) {
 	return x;
 }
 
-void zapiszZadanie(Zadanie zad, char* nazwa) {
-	FILE* plik;
+void zapiszNorme(Zadanie zad, char *nazwa)
+{
+	FILE *plik;
 	char nazwaPliku[50];
 
 	sprintf(nazwaPliku, "normaRes%c_%s.csv", zad.litera, nazwa);
 	plik = fopen(nazwaPliku, "w");
 
-	if (plik != NULL) {
-		for (int i = 0; i < zad.wynik.iteracje; i++) {
+	if (plik != NULL)
+	{
+		for (int i = 0; i < zad.wynik.iteracje; i++)
+		{
 			fprintf(plik, "%e\n", zad.wynik.resHist[i]);
 		}
 
@@ -214,76 +254,96 @@ void zapiszZadanie(Zadanie zad, char* nazwa) {
 	}
 }
 
-void zapiszCzas(Zadanie zad, char* nazwa) {
-	FILE* plik;
+void zapiszCzas(Zadanie zad, char *nazwa)
+{
+	FILE *plik;
 	char nazwaPliku[50];
-	sprintf(nazwaPliku, "wynik%c_%s.csv", zad.litera, nazwa);
+	sprintf(nazwaPliku, "czasIter%c_%s.csv", zad.litera, nazwa);
 	plik = fopen(nazwaPliku, "a");
 
-	if (plik != NULL) {
+	if (plik != NULL)
+	{
 		fprintf(plik, "%d, %e, %d\n", zad.n, zad.wynik.czas, zad.wynik.iteracje);
 		fclose(plik);
 	}
 }
 
-double norma(double* v, int n) {
+double norma(double *v, int n)
+{
 	double suma = 0;
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++)
+	{
 		suma += v[i] * v[i];
 	}
 	return sqrt(suma);
 }
 
-double** sumaMacierzy(double** A, double** B, int n) {
-	double** C = zbudujMacierz(n);
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
+double **sumaMacierzy(double **A, double **B, int n)
+{
+	double **C = zbudujMacierz(n);
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
 			C[i][j] = A[i][j] + B[i][j];
 		}
 	}
 	return C;
 }
 
-double** roznicaMacierzy(double** A, double** B, int n) {
-	double** C = zbudujMacierz(n);
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
+double **roznicaMacierzy(double **A, double **B, int n)
+{
+	double **C = zbudujMacierz(n);
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
 			C[i][j] = A[i][j] - B[i][j];
 		}
 	}
 	return C;
 }
 
-double* sumaWektorow(double* v, double* w, int n) {
-	double* m = zbudujWektor(n);
-	for (int i = 0; i < n; i++) {
+double *sumaWektorow(double *v, double *w, int n)
+{
+	double *m = zbudujWektor(n);
+	for (int i = 0; i < n; i++)
+	{
 		m[i] = v[i] + w[i];
 	}
 	return m;
 }
 
-double* roznicaWektorow(double* v, double* w, int n) {
-	double* m = zbudujWektor(n);
-	for (int i = 0; i < n; i++) {
+double *roznicaWektorow(double *v, double *w, int n)
+{
+	double *m = zbudujWektor(n);
+	for (int i = 0; i < n; i++)
+	{
 		m[i] = v[i] - w[i];
 	}
 	return m;
 }
 
-double* iloczynMacierzWektor(double** A, double* v, int n) {
-	double* w = zbudujWektor(n);
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
+double *iloczynMacierzWektor(double **A, double *v, int n)
+{
+	double *w = zbudujWektor(n);
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
 			w[i] += A[i][j] * v[j];
 		}
 	}
 	return w;
 }
 
-double** neg(double** A, int n) {
-	double** B = zbudujMacierz(n);
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
+double **neg(double **A, int n)
+{
+	double **B = zbudujMacierz(n);
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
 			B[i][j] = -A[i][j];
 		}
 	}

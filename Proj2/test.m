@@ -1,7 +1,11 @@
+clc
+clear all
+close all
+
 N = 997;
 
 e = 5;
-a1 = 3;
+a1 = 10;
 a2 = -1;
 a3 = -1;
 on = ones(N, 1);

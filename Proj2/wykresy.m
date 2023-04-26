@@ -31,9 +31,12 @@ legend('Metoda Jacobiego', 'Metoda Gaussa-Seidla')
 saveas(gcf, "zadC.png")
 
 
-czasJacobi = readmatrix("wynikA_Jacobi.csv");
-czasGauss = readmatrix("wynikA_GaussSeidel.csv");
-czasLU = readmatrix("wynikA_LU.csv");
+czasJacobi = readmatrix("czasIterA_Jacobi.csv");
+czasGauss = readmatrix("czasIterA_GaussSeidel.csv");
+czasLU = readmatrix("czasIterA_LU.csv");
+
+czasJacobi(1,:) = [];
+czasGauss(1,:) = [];
 
 plot(czasJacobi(:,1), czasJacobi(:,2), 'LineWidth', 2)
 hold on

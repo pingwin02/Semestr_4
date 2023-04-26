@@ -3,10 +3,9 @@
 
 #include "funkcje.h"
 
-
-void Jacobi(Zadanie* zad);
-void GaussSeidel(Zadanie* zad);
-void faktoryzacjaLU(Zadanie* zad);
+void Jacobi(Zadanie *zad);
+void GaussSeidel(Zadanie *zad);
+void faktoryzacjaLU(Zadanie *zad);
 
 Zadanie stworzZadanieA(int n);
 Zadanie stworzZadanieC(int n);

@@ -8,6 +8,7 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{float}
+\usepackage{multicol}
 
 \lstdefinestyle{mystyle}{
     language=C,
@@ -52,6 +53,7 @@ gdzie:
     \item $\boldsymbol{x}$ -- wektor rozwiązań układu.
 \end{itemize}
 
+\pagebreak
 Macierz $A$ została zdefiniowana jako macierz pasmowa o rozmiarze $997 \times 997$:
 
 \begin{equation} \label{eq:macierzA}
@@ -129,7 +131,7 @@ na wyznaczeniu kolejnych przybliżeń, jednakże zgodnie z tym wzorem:
 Problemem tej metody jest konieczność wyznaczenia macierzy $(D+L)^{-1}$,
 czego powinno się unikać z racji dużej złożoności obliczeniowej.
 
-Z tego powodu zamiast wyznaczać odwrotność macierzy $D+L$,
+Z tego powodu zamiast wyznaczać odwrotności macierzy $D+L$,
 stosuje się tzw. podstawienie w przód (ang. \textit{forward substitution}).
 
 \subsubsection{Podstawienie w przód}
@@ -158,7 +160,7 @@ w następujący sposób:
 \end{equation*}
 
 Koniecznym jest by macierz $\boldsymbol{L}$ była macierzą trójkątną dolną,
-np. w przypadku sumy macierzy $D+L$.
+np. suma macierzy $D+L$ spełnia ten warunek.
 
 \subsubsection{Podstawienie w tył}
 Metoda podstawienia w tył podobnie jak metoda podstawienia w przód
@@ -189,7 +191,7 @@ Kolejne kroki wyglądają następująco:
 
 \subsubsection{Warunek zakończenia}
 By sprawdzić czy osiągnięto zadaną dokładność należy przy każdej iteracji
-sprawdzać czy norma tzw. wektora residuum $\boldsymbol{res}$ jest mniejsza 
+sprawdzać czy norma tzw. wektora residuum (błędu rezydualnego) $\boldsymbol{res}$ jest mniejsza 
 od zadanej wartości, np. $10^{-9}$.
 
 Wektor residuum jest zdefiniowany następująco:
@@ -198,14 +200,27 @@ Wektor residuum jest zdefiniowany następująco:
 \end{equation}
 W idealnej sytuacji powinien być równy wektorowi zerowemu.
 
-Natomiast w większości przypadków, by sprawdzić czy osiągnięto zadaną dokładność
-wyznacza się normę wektora residuum $\boldsymbol{res}$:
+Normę wektora residuum możemy obliczyć ze wzoru na normę euklidesową:
 
 \begin{equation}
     \boldsymbol{||res^{(k)}|| = \sqrt{\sum_{i=1}^{n}(res_i^{(k)})^2}}
 \end{equation}
 
 Tym sposobem możemy z góry określić dokładność rozwiązania.
+
+\pagebreak
+
+Czasem może dojść do sytuacji, w której metoda nie zbiega do rozwiązania, np. norma
+wektora residuum rośnie do nieskończoności. W takim przypadku należy sprawdzić czy
+macierz $\boldsymbol{A}$ jest zdominowana przez przekątną, czyli czy zachodzi nierówność:
+
+\begin{equation}\label{eq:domination}
+    \boldsymbol{|a_{ii}| > \sum_{j=1, j\neq i}^{n}|a_{ij}| \quad dla \quad i=1,2,...,n}
+\end{equation}
+
+Dodatkowo można określić limit ilości iteracji, po których metoda powinna zakończyć
+działanie, nawet jeśli nie osiągnęła zadanego poziomu dokładności. Do wykonania zadań
+został wykorzystany limit 1000 iteracji.
 
 \subsection{Metody bezpośrednie}
 Metody bezpośrednie polegają na wyznaczeniu rozwiązania układu równań
@@ -263,37 +278,203 @@ By przejść dalej konieczne jest wyznaczenie potrzebnych macierzy pomocniczych.
     podstawienia w tył.
 \end{enumerate}
 
-\section{Implementacja i analiza wyników}
+Jak widać złożoność obliczeniowa tej metody wynosi $O(n^3)$, dlatego
+nie jest zalecana do rozwiązywania układów równań o dużych rozmiarach.
+
+\section{Implementacja metod i analiza wyników}
+Implementację metod przedstawionych w poprzednim rozdziale wykonano w języku C.
+Do pomiaru czasu wykorzystano funkcję \texttt{clock()} z biblioteki \texttt{time.h},
+natomiast do wyznaczenia sinusa wykorzystano bibliotekę \texttt{math.h}.
+
+W pliku \texttt{main.c} znajduje się funkcja \texttt{main()}, która odpowiada za
+wykonywanie zadań. Plik \texttt{metody.c} zawiera implementacje metod iteracyjnych
+oraz bezpośredniej LU, natomiast plik \texttt{funkcje.c} -- wszystkie implementacje
+potrzebnych operacji na macierzach i wektorach.
+
 \subsection{Zadanie A}
 Zadanie A polegało na zaimplementowaniu układu równań przedstawionego we
 wstępie.
 \subsection{Zadanie B}
-Zadanie B polegało na zaimplementowaniu metod iteracyjnych Jasobiego i 
-Gaussa-Seidla, sprawdzeniu ilość iteracji potrzebnych do zakończenia.
-
+Zadanie B polegało na zaimplementowaniu metod iteracyjnych Jacobiego i 
+Gaussa-Seidla oraz sprawdzeniu ilości iteracji potrzebnych do rozwiązania
+układu równań z zadania A. Dodatkowo należało zmierzyć czas potrzebny na
+rozwiązanie układu równań przez obie metody, tj. czas potrzebny by norma
+wektora residuum była mniejsza od $10^{-9}$.
 Wyniki zostały przedstawione poniżej.
 
-\begin{center}
-    \begin{tabular}{| c | c | c |} 
-    \hline
-    \multicolumn{3}{|c|}{\shortstack{Tabela 1. Porównanie czasu \\ i ilości iteracji
-    dla zadania A}} \\
-    \hline
-    Metoda & Czas & Ilość iteracji \\ [0.5ex] 
-    \hline
-    Jacobi & 0.12s & 18 \\
-    \hline
-    Gauss-Seidel & 0.094s & 14 \\
-    \hline
-    \end{tabular}
-\end{center}
-
+\begin{table}[H]
+    \begin{center}
+        \begin{tabular}{| c | c | c |} 
+        \hline
+        Metoda & Czas & Ilość iteracji \\
+        \hline
+        Jacobi & 0.132s & 18 \\
+        \hline
+        Gauss-Seidel & 0.105s & 14 \\
+        \hline
+        \end{tabular}
+        \caption{Wyniki pomiarów czasu i ilości iteracji dla zadania A}
+    \end{center}
+\end{table}
 
 \begin{figure}[H]
     \includegraphics[width=0.75\textwidth]{zadB.png}
     \centering
-    \caption{Wykres przedstawiający wartość normy wektora residuum od iteracji}
+    \caption{Wykres przedstawiający wartość normy wektora residuum}
+    {od iteracji dla metod iteracyjnych}
 \end{figure}
 
+Jak widać na wykresie oraz w tabeli, metoda Gaussa-Seidla zbiega szybciej do
+rozwiązania niż metoda Jacobiego. Jest to spowodowane tym, że w metodzie
+Gaussa-Seidla wykorzystywane są już nowe wartości, które zostały wyznaczone
+w tej samej iteracji, natomiast w metodzie Jacobiego wykorzystywane są
+wartości z poprzedniej iteracji.
+
+\subsection{Zadanie C}
+Zadanie C podobnie jak B polegało na porównaniu działania metod iteracyjnych.
+Natomiast trzeba było dokonać pewnej zmiany w budowie macierzy $\boldsymbol{A}$.
+Wartość na głównej przekątnej macierzy $\boldsymbol{a_1}$ została zastąpiona
+wartością 3. Dla takiego układu równań wyniki prezentują się następująco:
+
+\begin{table}[H]
+    \begin{center}
+        \begin{tabular}{| c | c | c |} 
+        \hline
+        Metoda & Czas & Ilość iteracji \\
+        \hline
+        Jacobi & 7.324s & 1000 \\
+        \hline
+        Gauss-Seidel & 3.812s & 521 \\
+        \hline
+        \end{tabular}
+        \caption{Wyniki pomiarów czasu i ilości iteracji dla zadania C}
+    \end{center}
+\end{table}
+
+\begin{figure}[H]
+    \includegraphics[width=0.75\textwidth]{zadC.png}
+    \centering
+    \caption{Wykres przedstawiający wartość normy wektora residuum}
+    {od iteracji dla metod iteracyjnych}
+\end{figure}
+
+Obie metody nie zbiegły się do rozwiązania. Metoda Gaussa-Seidla zakończyła się
+po 521 iteracjach z racji, że wartość normy wektora błędu rezydualnego doszła do nieskończoności.
+
+Powodem takiego zachowania jest to, że macierz $\boldsymbol{A}$ nie jest
+macierzą diagonalnie dominującą (\ref {eq:domination}).
+
+\subsection{Zadanie D}
+W zadaniu D trzeba było zaimplementować metodę faktoryzacji LU
+i rozwiązać ten sam zmodyfikowany układ z zadania C, którego metody iteracyjne
+nie zdołały rozwiązać. Rezultaty przedstawia poniższa tabela.
+
+\begin{table}[H]
+    \begin{center}
+        \begin{tabular}{| c | c | c |} 
+        \hline
+        Metoda & Czas & Wartość normy błędu rezydualnego \\
+        \hline
+        \rule{0pt}{2.5ex}   
+        Faktoryzacja LU & 1.14s & $2.414325 \cdot 10^{-13}$  \\
+        \hline
+        \end{tabular}
+        \caption{Wyniki pomiaru czasu oraz normy błędu dla zadania D}
+    \end{center}
+\end{table}
+
+Wartość normy błędu rezydualnego jest bardzo mała, co oznacza, że metoda
+faktoryzacji LU poprawnie rozwiązała układ równań zadanego w zadaniu C.
+
+\subsection{Zadanie E}
+Zadanie E miało na celu porównanie czasu działania i ilości potrzebnych
+iteracji do rozwiązania układu z zadania A dla różnych rozmiarów macierzy $A$.
+
+Do wykonania zadania przyjęto następujące wartości $N$:
+
+\begin{itemize}
+    \begin{multicols}{3}
+        \centering
+        \item $N_1 = 100$
+        \item $N_2 = 500$
+        \item $N_3 = 1000$
+        \item $N_4 = 2000$
+        \item $N_5 = 3000$
+        \item $N_6 = 5000$
+        \item $N_7 = 8000$
+        \item $N_8 = 10000$
+        \item $N_9 = 12000$
+    \end{multicols}
+\end{itemize}
+
+\begin{figure}[H]
+    \includegraphics[width=0.65\textwidth]{zadE.png}
+    \centering
+    \caption{Wykres przedstawiający czas działania metod}
+    {od rozmiaru macierzy $A$}
+\end{figure}
+
+\begin{figure}[H]
+    \includegraphics[width=0.65\textwidth]{zadE_iter.png}
+    \centering
+    \caption{Wykres przedstawiający ilość iteracji metod iteracyjnych}
+    {od rozmiaru macierzy $A$}
+\end{figure}
+
+Jak widać na wykresach, metoda faktoryzacji LU jest najwolniejsza (dla $N > 3000$
+zdecydowałem o przerwaniu obliczeń dla tej metody, ponieważ czas wykonania był 
+zbyt długi), natomiast metoda Gaussa-Seidla jest najszybsza. Potrzebowała ona również
+mniejszej ilości iteracji niż metoda Jacobiego, aby osiągnąć odpowiednio dokładne rozwiązanie.
+
+Co ciekawe ilość iteracji potrzebnych do rozwiązania układu równań dla obu metod 
+nie rosła wraz z rozmiarem macierzy $A$. Wynika to z tego, że wartości w macierzy $A$
+oraz w wektorze $b$ nie zmieniają się.
+
+\section{Wnioski}
+
+Wyniki testów pokazały, że metoda Gaussa-Siedla 
+działa szybciej niż metoda Jacobiego w 
+przypadku rozwiązywania danego układu równań.
+
+Metoda faktoryzacji LU jest zdecydowanie wolniejsza od metod iteracyjnych,
+natomiast radzi sobie z każdym układem równań, niezależnie od tego czy
+macierz $\boldsymbol{A}$ jest diagonalnie dominująca czy nie.
+
+Warto jednak zauważyć, że metody iteracyjne również mają swoje zalety, 
+takie jak mniejsze wymagania pamięciowe, co może prowadzić do lepszych 
+osiągów w niektórych przypadkach.
+
+Ostatecznie, wybór metody rozwiązania liniowego układu równań zależy 
+od specyficznych wymagań i ograniczeń problemu, takich jak dokładność, 
+czas obliczeń, pamięć, struktura macierzy itp.
+
+\renewcommand{\refname}{Źródła}
+\begin{thebibliography}{100}
+    \bibitem{intrukcja} 
+    Kurs e-nauczanie Metody Numeryczne (Informatyka) - 2023\\
+    \textit{Instrukcja do laboratorium 3}\\
+    \textit{Wykład 3 i 4}
+    \bibitem{iteracyjne}
+    AGH,
+    \textit{Metoda Jacobiego oraz Gaussa-Seidla}
+    \\\url{http://sendzimir.metal.agh.edu.pl/~im4/metnum/dyd/pm/iteracyjne.htm}
+    \bibitem{gauss}
+    Wikipedia,
+    \textit{Metoda Gaussa-Seidla}
+    \\\url{https://pl.wikipedia.org/wiki/Metoda_Gaussa-Seidla}
+    \bibitem{lu}
+    Wikipedia,
+    \textit{Faktoryzacja LU}
+    \\\url{https://pl.wikipedia.org/wiki/Faktoryzacja_LU}
+    \bibitem{lu2}
+    Jerzy Wałaszek,
+    \textit{Metody numeryczne - Rozkład LU i układ równań liniowych}
+    \\\url{https://eduinf.waw.pl/inf/alg/008_nm/0026.php}
+    \bibitem{dom}
+    Wikipedia,
+    \textit{Macierz diagonalnie dominująca}
+    \\\url{https://pl.wikipedia.org/wiki/Macierz_diagonalnie_dominuj%C4%85ca}
+
+\end{thebibliography}
 
 \end{document}

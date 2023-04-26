@@ -1,7 +1,8 @@
 #include "funkcje.h"
 #include "metody.h"
 
-int main() {
+int main()
+{
 	srand(time(NULL));
 	setbuf(stdout, NULL);
 
