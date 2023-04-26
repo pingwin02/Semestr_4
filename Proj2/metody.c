@@ -219,7 +219,7 @@ void zadanieE()
 
 	for (int i = 0; i < 9; i++)
 	{
-		start(stworzZadanieA(n[i]), Jacobi, "Jacobi", 1);
+		start(stworzZadanieA(n[i]), Jacobi, "Jacobi");
 		start(stworzZadanieA(n[i]), GaussSeidel, "GaussSeidel");
 
 		if (n[i] <= 3000)
