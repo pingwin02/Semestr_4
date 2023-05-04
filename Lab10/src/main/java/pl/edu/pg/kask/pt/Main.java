@@ -116,11 +116,11 @@ public class Main {
             System.out.println("Enter mage level:");
             int mageLevel = input.nextInt();
             input.nextLine();
-            System.out.println("Enter tower name:");
+            System.out.println("Enter tower name (optional):");
             String towerName = input.nextLine();
             em.getTransaction().begin();
             Tower tower = em.find(Tower.class, towerName);
-            if (tower == null) {
+            if (tower == null && !towerName.isEmpty()) {
                 System.out.println("ERROR: Tower not found");
                 return;
             }
@@ -155,10 +155,10 @@ public class Main {
             System.out.println("Enter tower name:");
             String towerName = input.nextLine();
             em.getTransaction().begin();
+            em.createQuery("UPDATE Mage m SET m.tower = NULL WHERE m.tower.name = :towerName")
+                    .setParameter("towerName", towerName)
+                    .executeUpdate();
             Tower tower = em.find(Tower.class, towerName);
-            for (Mage mage : tower.getMages()) {
-                em.remove(mage);
-            }
             em.remove(tower);
             em.getTransaction().commit();
             System.out.println("SUCCESS: Tower deleted");
@@ -177,6 +177,10 @@ public class Main {
                 for (Mage mage : tower.getMages()) {
                     System.out.println("- " + mage);
                 }
+            }
+            List<Mage> mages = em.createQuery("SELECT m FROM Mage m WHERE m.tower IS NULL", Mage.class).getResultList();
+            for (Mage mage : mages) {
+                System.out.println(mage);
             }
             System.out.println("---");
         } catch (Exception e) {
