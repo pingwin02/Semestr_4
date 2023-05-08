@@ -20,6 +20,7 @@ for i = 1:4
     [FT] = trygval2d(XX,YY,t);
 
     % wykresy
+    figure
     subplot(2,2,1)
     plot(xp,yp,'-o','linewidth',1, 'MarkerSize', 2)
     xlabel("x")
@@ -56,7 +57,6 @@ end
 %% Zadanie 2
 
 clear all
-close all
 clc
 
 [XX,YY] = meshgrid(linspace(0,1,101),linspace(0,1,101));
@@ -73,7 +73,7 @@ for i = 5:45
     Div(i) = max(max(abs(F1-F2)));
     F2 = F1;
 end
-
+figure
 plot(Div)
 xlabel("Liczba punktów pomiarowych K")
 xlim([5 45])
