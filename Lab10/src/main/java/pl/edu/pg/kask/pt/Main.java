@@ -3,7 +3,6 @@ package pl.edu.pg.kask.pt;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 import java.util.Scanner;
@@ -54,28 +53,12 @@ public class Main {
 
             em.getTransaction().begin();
 
-            Tower tower1 = new Tower();
-            tower1.setName("Black Tower");
-            tower1.setHeight(100);
+            Tower tower1 = new Tower("Black Tower", 100);
+            Tower tower2 = new Tower("White Tower", 200);
 
-            Tower tower2 = new Tower();
-            tower2.setName("White Tower");
-            tower2.setHeight(200);
-
-            Mage mage1 = new Mage();
-            mage1.setName("Gandalf");
-            mage1.setLevel(20);
-            mage1.setTower(tower1);
-
-            Mage mage2 = new Mage();
-            mage2.setName("Sauron");
-            mage2.setLevel(30);
-            mage2.setTower(tower1);
-
-            Mage mage3 = new Mage();
-            mage3.setName("Harry Potter");
-            mage3.setLevel(205);
-            mage3.setTower(tower2);
+            Mage mage1 = new Mage("Gandalf", 20, tower1);
+            Mage mage2 = new Mage("Sauron", 30, tower1);
+            Mage mage3 = new Mage("Harry Potter", 205, tower2);
 
             em.persist(tower1);
             em.persist(tower2);
@@ -97,9 +80,7 @@ public class Main {
             System.out.println("Enter tower height:");
             int towerHeight = input.nextInt();
             em.getTransaction().begin();
-            Tower tower = new Tower();
-            tower.setName(towerName);
-            tower.setHeight(towerHeight);
+            Tower tower = new Tower(towerName, towerHeight);
             em.persist(tower);
             em.getTransaction().commit();
             System.out.println("SUCCESS: Tower added");
@@ -124,10 +105,7 @@ public class Main {
                 System.out.println("ERROR: Tower not found");
                 return;
             }
-            Mage mage = new Mage();
-            mage.setName(mageName);
-            mage.setLevel(mageLevel);
-            mage.setTower(tower);
+            Mage mage = new Mage(mageName, mageLevel, tower);
             em.persist(mage);
             em.getTransaction().commit();
             System.out.println("SUCCESS: Mage added");

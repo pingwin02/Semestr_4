@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
 public class Tower {
     @Id
     @Getter
@@ -18,6 +19,11 @@ public class Tower {
     @Setter
     @OneToMany(mappedBy = "tower")
     private List<Mage> mages;
+
+    public Tower(String name, int height) {
+        this.name = name;
+        this.height = height;
+    }
 
     @Override
     public String toString() {

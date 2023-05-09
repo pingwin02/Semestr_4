@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@NoArgsConstructor
 public class Mage {
     @Id
     @Getter
@@ -16,6 +17,12 @@ public class Mage {
     @Setter
     @ManyToOne
     private Tower tower;
+
+    public Mage(String name, int level, Tower tower) {
+        this.name = name;
+        this.level = level;
+        this.tower = tower;
+    }
 
     @Override
     public String toString() {
