@@ -16,6 +16,8 @@
 *.out
 
 *.dat
+.idea
+target
 
 # User-specific files
 *.rsuser
