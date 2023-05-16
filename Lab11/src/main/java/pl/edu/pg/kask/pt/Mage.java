@@ -13,10 +13,6 @@ public class Mage {
         return name;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
     @Override
     public String toString() {
         return "Mage{" +
