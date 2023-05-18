@@ -1,0 +1,7 @@
+Czy lepiej jest w takiej sytuacji korzystać 
+z interpolacji, czy aproksymacji?
+
+Z racji że dron jest obarczony błędem pomiarowym, 
+to lepiej jest korzystać z aproksymacji,
+ponieważ punkty pomiarowe nie są dokładne, 
+a aproksymacja pozwala na wygładzenie krzywej.
