@@ -103,15 +103,15 @@ def third_degree_spline_interpolation(nodes):
     # Rozwiązanie układu równań
     c = np.linalg.solve(A, b)
 
-    print("\rInterpolacja funkcjami sklejanymi: 50%", end="")
-
     # Wyznaczenie wartości funkcji interpolującej
     for i in range(len(X_int)):
-        print(f"\rInterpolacja funkcjami sklejanymi: {round(i / len(X_int) * 100 + 50)}%", end="")
+        print(f"\rInterpolacja funkcjami sklejanymi: {round(i / len(X_int) * 100)}%", end="")
         for j in range(n):
+            # Wyznaczenie przedziału, w którym znajduje się X_int[i]
             if x[j] <= X_int[i] <= x[j + 1]:
                 h = X_int[i] - x[j]
-                Y_int[i] = y[j] + c[4 * j + 1] * h + c[4 * j + 2] * h ** 2 + c[4 * j + 3] * h ** 3
+                Y_int[i] = c[4 * j] + c[4 * j + 1] * h + c[4 * j + 2] * h ** 2 + c[4 * j + 3] * h ** 3
+                break
 
     print("\rInterpolacja funkcjami sklejanymi: 100%")
     return X_int, Y_int

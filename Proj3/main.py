@@ -2,7 +2,7 @@ import os
 import numpy as np
 from matplotlib import pyplot as plt
 
-from Proj3.interpolations import lagrange_interpolation, third_degree_spline_interpolation
+from interpolations import lagrange_interpolation, third_degree_spline_interpolation
 from gpx_handler import parse_gpx_file
 
 
@@ -23,17 +23,21 @@ def plot_elevation_profile(data, nodes, int_data, route_name, interp_type):
     ele, dist = data
     X, Y = nodes
     X_int, Y_int = int_data
+    plt.figure(figsize=(15, 5))
     plt.plot(dist, ele, "o", label="Dane rzeczywiste", markersize=3, color="gray")
-    plt.plot(X, Y, "ro", label="Węzły interpolacji", markersize=2)
-    plt.plot(X_int, Y_int, "b--", label=interp_type, linewidth=1)
+    plt.plot(X_int, Y_int, "b--", label=interp_type, linewidth=2)
+    plt.plot(X, Y, "ro", label="Węzły interpolacji", markersize=3)
     plt.xlabel("Odległość (km)")
     plt.ylabel("Wysokość (m)")
-    plt.ylim(min(ele) - 20, max(ele) + 20)
-    plt.title(route_name)
+    plt.title(route_name + "_unscaled")
     plt.grid(True)
     plt.legend()
+    plt.savefig(f"plots/{route_name}_unscaled.png")
+    plt.title(route_name)
+    plt.ylim(min(ele) - 5, max(ele) + 5)
     plt.savefig(f"plots/{route_name}.png")
-    plt.show()
+    # plt.show()
+    plt.close()
 
 
 def get_nodes(data, K, random=False):
@@ -81,25 +85,27 @@ if __name__ == "__main__":
         raise Exception("Brak folderu z trasami")
 
     for track in os.listdir("routes"):
-        data, route_name = parse_gpx_file(track)
-        for num in NUM_OF_POINTS:
-            print(f"\nLiczba węzłów interpolacji: {num}")
+        if track.endswith(".gpx"):
+            data, route_name = parse_gpx_file(track)
+            for num in NUM_OF_POINTS:
+                print(f"\nLiczba węzłów interpolacji: {num}")
 
-            nodes = get_nodes(data, num)
+                nodes = get_nodes(data, num)
 
-            int_data = lagrange_interpolation(nodes)
-            plot_elevation_profile(data, nodes, int_data, f"{route_name}_K={num}_Lagrange", "Interpolacja Lagrange'a")
+                int_data = lagrange_interpolation(nodes)
+                plot_elevation_profile(data, nodes, int_data, f"{route_name}_K={num}_Lagrange",
+                                       "Interpolacja Lagrange'a")
 
-            int_data = third_degree_spline_interpolation(nodes)
-            plot_elevation_profile(data, nodes, int_data, f"{route_name}_K={num}_Splajn",
-                                   "Interpolacja splajnami 3. stopnia")
+                int_data = third_degree_spline_interpolation(nodes)
+                plot_elevation_profile(data, nodes, int_data, f"{route_name}_K={num}_Spline",
+                                       "Interpolacja splajnami 3. stopnia")
 
-            nodes = get_nodes(data, num, random=True)
+                nodes = get_nodes(data, num, random=True)
 
-            int_data = lagrange_interpolation(nodes)
-            plot_elevation_profile(data, nodes, int_data, f"{route_name}_K={num}_Lagrange_rand",
-                                   "Interpolacja Lagrange'a")
+                int_data = lagrange_interpolation(nodes)
+                plot_elevation_profile(data, nodes, int_data, f"{route_name}_K={num}_Lagrange_random",
+                                       "Interpolacja Lagrange'a")
 
-            int_data = third_degree_spline_interpolation(nodes)
-            plot_elevation_profile(data, nodes, int_data, f"{route_name}_K={num}_Splajn_rand",
-                                   "Interpolacja splajnami 3. stopnia")
+                int_data = third_degree_spline_interpolation(nodes)
+                plot_elevation_profile(data, nodes, int_data, f"{route_name}_K={num}_Spline_random",
+                                       "Interpolacja splajnami 3. stopnia")

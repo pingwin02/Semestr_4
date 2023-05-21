@@ -65,6 +65,7 @@ def parse_gpx_file(file_path):
 
     print(f"\nTrasa: {route_name}")
     print(f"Dystans: {total_distance:.3f} km")
+    print(f"Różnica wysokości: {max(elevations) - min(elevations):.3f} m")
     print(f"Ilość punktów danych: {len(elevations)}")
 
     return (elevations, distances), route_name
