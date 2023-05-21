@@ -3,6 +3,19 @@ import xml.etree.ElementTree as ET
 
 
 def calculate_distance(lat1, lon1, lat2, lon2):
+    """
+    Funkcja oblicza odległość między dwoma punktami na sferze o zadanych współrzędnych geograficznych.
+    Wykorzystuje wzór haversine.
+
+    Args:
+        lat1 (float): Szerokość geograficzna pierwszego punktu w stopniach.
+        lon1 (float): Długość geograficzna pierwszego punktu w stopniach.
+        lat2 (float): Szerokość geograficzna drugiego punktu w stopniach.
+        lon2 (float): Długość geograficzna drugiego punktu w stopniach.
+
+    Returns:
+        float: Odległość między punktami w kilometrach.
+    """
     earth_radius = 6371
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
@@ -14,35 +27,43 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 
 
 def parse_gpx_file(file_path):
+    """
+    Funkcja parsuje plik GPX zawierający trasę i zwraca dane dotyczące profilu wysokościowego.
+
+    Args:
+        file_path (str): Ścieżka do pliku GPX.
+
+    Returns:
+        tuple: Para złożona z listy wysokości i odległości oraz nazwy trasy.
+    """
     file_path = "routes/" + file_path
     tree = ET.parse(file_path)
     root = tree.getroot()
 
-    elevations = []
-    distances = [0]
-    X = []
-    Y = []
+    elevations = []  # Lista wysokości
+    distances = [0]  # Lista odległości, zaczynamy od 0
     prev_lat = None
     prev_lon = None
-    total_distance = 0
+    total_distance = 0  # Całkowita odległość
     route_name = root.find("{http://www.topografix.com/GPX/1/1}trk").find(
-        "{http://www.topografix.com/GPX/1/1}name").text
+        "{http://www.topografix.com/GPX/1/1}name").text  # Nazwa trasy
 
     for trkpt in root.iter("{http://www.topografix.com/GPX/1/1}trkpt"):
-        lat = float(trkpt.attrib["lat"])
-        lon = float(trkpt.attrib["lon"])
-        ele = float(trkpt.find("{http://www.topografix.com/GPX/1/1}ele").text)
+        lat = float(trkpt.attrib["lat"])  # Szerokość geograficzna punktu
+        lon = float(trkpt.attrib["lon"])  # Długość geograficzna punktu
+        ele = float(trkpt.find("{http://www.topografix.com/GPX/1/1}ele").text)  # Wysokość punktu
 
         if prev_lat is not None and prev_lon is not None:
+            # Obliczanie odległości między kolejnymi punktami
             distance = calculate_distance(prev_lat, prev_lon, lat, lon)
             total_distance += distance
             distances.append(total_distance)
 
-        elevations.append(ele)
+        elevations.append(ele)  # Dodanie wysokości do listy
         prev_lat = lat
         prev_lon = lon
 
-    print(f"Trasa: {route_name}")
+    print(f"\nTrasa: {route_name}")
     print(f"Dystans: {total_distance:.3f} km")
     print(f"Ilość punktów danych: {len(elevations)}")
 
