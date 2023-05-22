@@ -6,7 +6,7 @@ import json
 import dataclasses
 import os
 from part1_data_preparation import load_data, standardization
-from part2_model_definition import build_model, FFN_Hyperparams
+from part2_model_definition import build_model, FFN_Hyperparams, build_default_regression_model
 
 
 def plot_loss(history):
@@ -23,11 +23,11 @@ def plot_loss(history):
 def train(model, train_data, valid_data=None, exp_dir='exp_00'):
     (x, y) = train_data
 
-    # TODO define callbacks EarlyStopping, ModelCheckpoint, TensorBoard
     # my callbacks
-    es_cbk = tf.keras.callbacks.EarlyStopping(...)
-    ckp_cbk = tf.keras.callbacks.ModelCheckpoint(...)
-    tb_cbk = tf.keras.callbacks.TensorBoard(...)
+    es_cbk = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
+    ckp_cbk = tf.keras.callbacks.ModelCheckpoint(filepath=os.path.join(exp_dir, 'model_best_weights'),
+                                                 save_weights_only=True, save_best_only=True)
+    tb_cbk = tf.keras.callbacks.TensorBoard(log_dir=os.path.join(exp_dir, 'logs'))
 
     # training
     if valid_data is None:
@@ -54,6 +54,7 @@ def single_run(hp, train_data, experiment_dir, valid_data=None, verbose=True):
 
     # build model
     model = build_model(hp)
+    # model = build_default_regression_model(hp.num_inputs, hp.num_outputs)
 
     if verbose:
         print(model.summary())
@@ -73,11 +74,13 @@ def get_random_hp(constants):
     activation_fcn_choices = ['relu', 'tanh', 'sigmoid', 'elu', 'selu', 'softplus']
     lr_exponent_range = [-5, -1]
 
-    # TODO randomly select hyperparameters from given ranges
-    raise NotImplementedError
+    hidden_dims_len = np.random.randint(*hidden_dims_len_range)
+    hidden_dims = np.random.randint(*hidden_dims_values_range, size=hidden_dims_len).tolist()
+    activation_fcn = np.random.choice(activation_fcn_choices)
+    lr = 10 ** np.random.uniform(*lr_exponent_range)
 
-    # return FFN_Hyperparams(constants[0], constants[1], hidden_dims=hidden_dims,
-    #                        activation_fcn=activation_fcn, learning_rate=lr)
+    return FFN_Hyperparams(constants[0], constants[1], hidden_dims=hidden_dims,
+                           activation_fcn=activation_fcn, learning_rate=lr)
 
 
 if __name__ == '__main__':
