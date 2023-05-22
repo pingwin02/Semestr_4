@@ -16,7 +16,7 @@ grid on
 axis equal
 hold on
 plot3(xa,ya,za,'g','lineWidth', 4);
-title('Aproksymacja trygometryczna trajektorii (2) drona (N=60)');
+title('Aproksymacja trygometryczna trajektorii (2) drona (N = 60)');
 xlabel('x (m)');
 ylabel('y (m)');
 zlabel('z (m)');
@@ -40,7 +40,7 @@ for N = 1:71
 end
 
 figure
-plot(err);
+semilogy(err);
 title('Błąd aproksymacji trygonometrycznej trajektorii (2) drona');
 xlabel('Rząd aproksymacji N');
 ylabel('Wartość błędu');
@@ -57,7 +57,7 @@ grid on
 axis equal
 hold on
 plot3(xa,ya,za,'g','lineWidth', 4);
-title('Aproksymacja trygometryczna trajektorii (2) drona (N=150)');
+title('Aproksymacja trygometryczna trajektorii (2) drona (N = 150)');
 xlabel('x (m)');
 ylabel('y (m)');
 zlabel('z (m)');
