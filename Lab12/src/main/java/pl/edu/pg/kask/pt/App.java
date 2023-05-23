@@ -35,10 +35,18 @@ public class App {
 
             long time = System.currentTimeMillis();
 
-            ForkJoinPool forkJoinPool = new ForkJoinPool(20);
+            ForkJoinPool forkJoinPool = new ForkJoinPool(4);
             forkJoinPool.submit(() -> imagePaths.parallelStream()
-                    .map(App::processImage)
-                    .forEach(pair -> saveImage(pair, outputDirectory))).get();
+                    .map(path -> {
+                        try {
+                            return Pair.of(path.getFileName().toString(), ImageIO.read(path.toFile()));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    }).map(imagePair -> processImage(imagePair))
+                    .forEach(imagePair -> saveImage(imagePair, outputDirectory))).get();
+
 
             System.out.println("Image processing completed.");
             System.out.println("Time: " + (System.currentTimeMillis() - time) + " ms");
@@ -53,22 +61,17 @@ public class App {
 
     }
 
-    private static Pair<String, BufferedImage> processImage(Path imagePath) {
-        String fileName = imagePath.getFileName().toString();
+    private static Pair<String, BufferedImage> processImage(Pair<String, BufferedImage> imagePair) {
 
-        try {
-            BufferedImage originalImage = ImageIO.read(imagePath.toFile());
-            if (originalImage == null) {
-                System.out.println("Error reading image: " + fileName);
-                return null;
-            }
-            BufferedImage transformedImage = transformImage(originalImage);
-            return Pair.of(fileName, transformedImage);
-        } catch (IOException e) {
-            System.out.println("Error processing image: " + fileName);
-            e.printStackTrace();
+        String fileName = imagePair.getLeft();
+        BufferedImage originalImage = imagePair.getRight();
+
+        if (originalImage == null) {
+            System.out.println("Error reading image: " + fileName);
             return null;
         }
+        BufferedImage transformedImage = transformImage(originalImage);
+        return Pair.of(fileName, transformedImage);
     }
 
     private static BufferedImage transformImage(BufferedImage originalImage) {
