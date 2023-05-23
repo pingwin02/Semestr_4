@@ -9,7 +9,7 @@ public class Magazyn {
         this.pojemnosc = pojemnosc;
     }
 
-    public synchronized boolean dodajProdukt(int index, int ilosc) {
+    public boolean dodajProdukt(int index, int ilosc) {
         if (produkty[index] + ilosc > pojemnosc) {
             return false;
         } else {
@@ -18,7 +18,7 @@ public class Magazyn {
         }
     }
 
-    public synchronized boolean usunProdukt(int index, int ilosc) {
+    public boolean usunProdukt(int index, int ilosc) {
         if (produkty[index] - ilosc < 0) {
             return false;
         } else {
