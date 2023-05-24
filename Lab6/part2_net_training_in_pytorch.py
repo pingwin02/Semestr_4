@@ -42,7 +42,7 @@ def training(model, x, y):
 
     loss_fn = F.binary_cross_entropy
 
-    history = [];
+    history = []
     i_step = 0
 
     # pętla uczenia gradientowego

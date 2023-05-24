@@ -30,8 +30,8 @@ def zad1_single_neuron(student_id):
     n_samples, n_features = x.shape
 
     # zakomentuj, jak juz nie potrzebujesz
-    inspect_data(x, y)
-    plot_data(x, y, plot_xy_range=[-1, 2])
+    # inspect_data(x, y)
+    # plot_data(x, y, plot_xy_range=[-1, 2])
 
     # model pojedynczego neuronu
     class SingleNeuron:
@@ -69,8 +69,8 @@ def zad2_two_layer_net(student_id):
     n_samples, n_features = x.shape
 
     # zakomentuj, jak juz nie potrzebujesz
-    inspect_data(x, y)
-    plot_data(x, y, plot_xy_range=[-1, 2])
+    # inspect_data(x, y)
+    # plot_data(x, y, plot_xy_range=[-1, 2])
 
     # warstwa czyli n_out pojedynczych, niezależnych neuronów operujących na tym samym wejściu\
     # (i-ty neuron ma swoje parametry w i-tej kolumnie macierzy W i na i-tej pozycji wektora b)
@@ -87,7 +87,7 @@ def zad2_two_layer_net(student_id):
     # warstwy mozna składać w wiekszy model
     class SimpleTwoLayerNetwork:
         def __init__(self, n_in, n_hidden, n_out):
-            self.hidden_layer = DenseLayer(n_in=n_in, n_out=n_hidden, f_act=relu)
+            self.hidden_layer = DenseLayer(n_in=n_in, n_out=n_hidden, f_act=hardlim)
             self.output_layer = DenseLayer(n_in=n_hidden, n_out=n_out, f_act=hardlim)
 
         def forward(self, x_data):
@@ -98,14 +98,14 @@ def zad2_two_layer_net(student_id):
     # model zainicjowany losowymi wagami
     model = SimpleTwoLayerNetwork(n_in=n_features, n_hidden=2, n_out=1)
 
-    w11 = -1
-    w12 = 1
-    w21 = -1
-    w22 = 1
-    b1 = 0
-    b2 = 1.5
+    w11 = 1
+    w12 = -1
+    b1 = -0.5
+    w21 = 1
+    w22 = -1
+    b2 = 0.5
     w_out1 = 1
-    w_out2 = -0.5
+    w_out2 = -1
     b_out = 0.5
     model.hidden_layer.W[:, 0] = [w11, w12]  # wagi neuronu h1
     model.hidden_layer.W[:, 1] = [w21, w22]  # wagi neuronu h2
