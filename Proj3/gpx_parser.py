@@ -1,6 +1,8 @@
 import math
 import xml.etree.ElementTree as ET
 
+from matplotlib import pyplot as plt
+
 
 def calculate_distance(lat1, lon1, lat2, lon2):
     """
@@ -62,6 +64,16 @@ def parse_gpx_file(file_path):
         elevations.append(ele)  # Dodanie wysokości do listy
         prev_lat = lat
         prev_lon = lon
+
+    plt.figure(figsize=(15, 5))
+    plt.scatter(distances, elevations, c=elevations, cmap="viridis", s=3)
+    plt.xlabel("Odległość (km)")
+    plt.ylabel("Wysokość (m)")
+    plt.grid(True)
+    plt.title(f"{route_name} - profil wysokościowy")
+    plt.savefig(f"routes/{route_name}_profile.png")
+    # plt.show()
+    plt.close()
 
     print(f"\nTrasa: {route_name}")
     print(f"Dystans: {total_distance:.3f} km")

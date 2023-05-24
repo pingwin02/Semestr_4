@@ -50,7 +50,7 @@ Każdy z tych wielomianów spełnia następujący warunek:
 \end{equation}
 
 Wielomian $F(x)$ można zapisać jako sumę iloczynów wartości funkcji w węźle $x_i$ oraz
-funkcji $\phi_i(x_i)$ w tym punkcie:
+postaci wielomianu $\phi_i(x)$ w tym punkcie:
 \begin{equation}
     F(x) = \sum_{i=0}^{n} f(x_i) \phi_i(x)
 \end{equation}
@@ -79,14 +79,16 @@ do znalezienia. W celu wyznaczenia współczynników tych wielomianów należy s
     \item $S_0''(x_0) = S_{n-1}''(x_n) = 0$
 \end{enumerate}
 
-Warunki 1. i 2. wynikają z tego, że wielomiany $S_i(x)$ muszą osiągać te same wartości co funkcja $f(x)$ 
-w węzłach interpolacji, jest to warunek konieczny, 
-by wielomiany te były wielomianami interpolacyjnymi.
+\begin{itemize}
+    \item Warunki 1. i 2. wynikają z tego, że wielomiany $S_i(x)$ muszą osiągać te same wartości co funkcja $f(x)$ 
+    w węzłach interpolacji, jest to warunek konieczny, 
+    by wielomiany te były wielomianami interpolacyjnymi.
+    \item Warunki 3. i 4. wynikają z tego, że wielomiany $S_i(x)$ oraz $S_{i+1}(x)$ muszą być ciągłe 
+    w punkcie $x_{i+1}$. Warunki te są konieczne, by wielomiany te były funkcjami sklejanymi.
+    \item Warunek 5. tyczy się początku i końca przedziału interpolacji.
 
-Warunki 3. i 4. wynikają z tego, że wielomiany $S_i(x)$ oraz $S_{i+1}(x)$ muszą być ciągłe 
-w punkcie $x_{i+1}$. Warunki te są konieczne, by wielomiany te były funkcjami sklejanymi.
+\end{itemize}
 
-Warunek 5. tyczy się początku i końca przedziału interpolacji.
 
 Do rozwiązania takiego układu równań można zbudować macierze $A$ oraz $b$ i wykorzystując
 jedną z metod rozwiązywania układów równań liniowych, np. metodę eliminacji Gaussa, wyznaczyć
@@ -141,11 +143,33 @@ trasie oraz ich wysokościach.
     \end{itemize}
 \end{multicols}
 
+\subsection{Profile wysokościowe}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{routes/Gdansk_Katy_Rybackie_profile.png}
+    \caption*{Profil wysokościowy \\ \textbf{Trasa 1 - Gdańsk - Kąty Rybackie - Gdańsk}}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{routes/Gdansk_Rewa_profile.png}
+    \caption*{Profil wysokościowy \\ \textbf{Trasa 2 - Gdańsk - Rewa}}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{routes/Gdansk_Tczew_profile.png}
+    \caption*{Profil wysokościowy \\ \textbf{Trasa 3 - Gdańsk - Tczew - Gdańsk}}
+\end{figure}
+
+\newpage
+
 \section{Implementacja}
 
 Wszystkie metody zaimplementowałem w języku \textit{Python} z 
 wykorzystaniem biblioteki \textit{numpy} do obliczeń numerycznych
-(np. do rozwiązywania układów równań liniowych --- funkcja \textit{numpy.linalg.solve})
+(np. do rozwiązywania układów równań liniowych -- funkcja \textit{numpy.linalg.solve})
 oraz biblioteki \textit{matplotlib}
 do generowania wykresów.
 
@@ -153,6 +177,18 @@ Każde dwie metody przetestowałem na wcześniej wspomnianych trzech profilach w
 Węzły interpolacji wybierałem na dwa sposoby: równomiernie oraz losowo.
 Zdecydowałem również o wybraniu różnej ilości węzłów (15 oraz 30), by móc 
 zauważyć wpływ ich ilości na dokładność interpolacji.
+
+\begin{itemize}
+    \item Plik \texttt{gpx\_parser.py} zawiera funkcje do wczytywania danych z plików GPX,
+    a także funkcje pomocnicze do wyznaczania odległości między punktami
+    i zwracania listy odległości i wysokości punktów na trasie
+    \item Plik \texttt{interpolations.py} zawiera implementacje wcześniej
+    wspomnianych metod interpolacji
+    \item Plik \texttt{main.py} zawiera funkcje pomocnicze do generowania wykresów
+    oraz funkcje do testowania interpolacji
+\end{itemize}
+
+\section{Wyniki}
 
 \subsection{Trasa 1}
 \subsubsection{Interpolacja Lagrange'a}
@@ -317,7 +353,7 @@ z gwałtownymi zmianami profilu trasy.
     \caption{Interpolacja splajnami 3. stopnia, 30 węzłów, trasa 2, węzły losowe}
 \end{figure}
 
-Podobnie jak w przypadku pierwszej trasy, zwiększenie ilości węzłów poprawia aproksymację profilu.
+Podobnie jak w przypadku pierwszej trasy, zwiększenie ilości węzłów poprawiło aproksymację profilu.
 Funkcja interpolowana splajnami 3. stopnia jest gładka, nie ma w niej dużych oscylacji,
 a jej wartości są zbliżone do wartości funkcji interpolowanej. Problemem jest jednak
 wybór węzłów, ponieważ w przypadku pechowego losowania, funkcja źle przewidzi gwałtowne zmiany profilu.
@@ -395,9 +431,10 @@ w sposób zadowalający.
     \caption{Interpolacja splajnami 3. stopnia, 30 węzłów, trasa 3, węzły losowe}
 \end{figure}
 
-Podwojenie ilości węzłów interpolacji dla tej metody podobnie jak w przypadku 
-dwóch poprzednich profili poprawia aproksymację. Natomiast wszystko zależy od tego, w jaki
-sposób zostały wybrane. W przypadku węzłów równoodległych, wielomian interpolacyjny
+Podwojenie ilości węzłów interpolacji dla tej metody polepszyło aproksymację,
+podobnie jak w przypadku dwóch poprzednich profili. 
+Natomiast wszystko zależy od tego, w jaki sposób zostały wybrane. 
+W przypadku węzłów równoodległych, wielomian interpolacyjny
 radzi sobie dobrze, natomiast w przypadku węzłów losowych, funkcja interpolowana
 może oscylować w miejscach, gdzie wylosowano blisko siebie wiele węzłów.
 

@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from interpolations import lagrange_interpolation, third_degree_spline_interpolation
-from gpx_handler import parse_gpx_file
+from gpx_parser import parse_gpx_file
 
 
 def plot_elevation_profile(data, nodes, int_data, route_name, interp_type):
@@ -58,7 +58,6 @@ def get_nodes(data, K, random=False):
         idx = sorted(np.linspace(0, len(elevations) - 1, K, dtype=int))
 
     else:
-        # Ensure that first and last point are included
         idx = [0, len(elevations) - 1]
         while len(idx) < K:
             new_idx = np.random.randint(1, len(elevations) - 1)
@@ -90,6 +89,7 @@ if __name__ == "__main__":
             for num in NUM_OF_POINTS:
                 print(f"\nLiczba węzłów interpolacji: {num}")
 
+                # Węzły interpolacji wybrane równomiernie
                 nodes = get_nodes(data, num)
 
                 int_data = lagrange_interpolation(nodes)
@@ -100,6 +100,7 @@ if __name__ == "__main__":
                 plot_elevation_profile(data, nodes, int_data, f"{route_name}_K={num}_Spline",
                                        "Interpolacja splajnami 3. stopnia")
 
+                # Węzły interpolacji wybrane losowo
                 nodes = get_nodes(data, num, random=True)
 
                 int_data = lagrange_interpolation(nodes)
