@@ -15,26 +15,8 @@ struct msgbuf
     int wielkosc;
 } komunikat;
 
-void usun_semafor()
-{
-    int kanal = msgget(KANAL, FLAGI);
-
-    if (kanal == -1)
-    {
-        perror("Błąd uzyskania dostępu do kanału");
-        exit(1);
-    }
-
-    if (msgctl(kanal, IPC_RMID, NULL) == -1)
-    {
-        perror("Błąd usuwania semafora");
-        exit(1);
-    }
-}
-
 void semafor_inicjalizuj()
 {
-    usun_semafor();
 
     int kanal = msgget(KANAL, IPC_CREAT | FLAGI);
     if (kanal == -1)
