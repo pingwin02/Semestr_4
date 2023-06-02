@@ -1,0 +1,13 @@
+W przypadku błędu wartości całki względem wartości referencyjnej,
+wszystkie metody dla N = 5 dawały wyniki rzędu 10^-2.
+Natomiast wraz ze wzrostem dokładności (N) błąd maleje.
+Dla N = 10^4 błąd wynosił już ok. 10^-5 dla metod prostokątów, trapezów
+oraz Simpsona, a dla metody Monte Carlo oscylował wokół 10^-3.
+Jest to spowodowane tym, że metoda Monte Carlo jest metodą
+losową, a więc wyniki są obarczone błędem statystycznym.
+
+
+Czas potrzebny do wyznaczenia wartości całki dla N = 10^7 dla metod
+prostokątów oraz trapezów był najkrótszy (ok. 0.5 sekundy), a dla
+metody Simpsona ponad 2 razy dłuższy. Metoda Monte Carlo potrzebowała 
+nieco mniej niż 1 sekundę.
