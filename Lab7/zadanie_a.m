@@ -5,6 +5,7 @@ close all
 x = linspace(0, 20, 100);
 y = gestosc_prawd(x);
 
+figure
 plot(x, y);
 xlabel('Czas t używania urządzenia liczony w latach');
 ylabel('Gęstość prawdopodobieństwa f(t)');
@@ -33,6 +34,7 @@ wart_trap = abs(wart_trap - P_ref);
 wart_Simp = abs(wart_Simp - P_ref);
 wart_Monte = abs(wart_Monte - P_ref);
 
+figure
 loglog(x, wart_prost);
 hold on
 loglog(x, wart_trap);
@@ -41,8 +43,9 @@ loglog(x, wart_Monte);
 hold off
 xlabel('Dokładność całkowania N');
 ylabel('Błąd względem wartości referencyjnej');
-legend('Metoda prostokątów', 'Metoda trapezów', ...
+lgd = legend('Metoda prostokątów', 'Metoda trapezów', ...
     'Metoda Simpsona', 'Metoda Monte Carlo');
+lgd.Location = "best";
 title("Wykres błędu całkowania w zależności od metody");
 xlim([5 10^4]);
 
@@ -68,6 +71,7 @@ tic
 met_MonteCarlo(@gestosc_prawd, n, 10^7);
 czas_Monte = toc;
 
+figure
 bar([czas_prost, czas_trap, czas_Simp, czas_Monte]);
 ylabel('Czas całkowania [s]');
 set(gca, 'XTickLabel', {'Metoda prostokątów', 'Metoda trapezów', ...
