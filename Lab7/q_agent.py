@@ -9,11 +9,11 @@ class QAgent(Agent):
         super().__init__(name)
 
         # hyperparams
-        self.lr = 0.1  # współczynnik uczenia (learning rate)
-        self.gamma = 0.9  # współczynnik dyskontowania
+        self.lr = 0.01  # współczynnik uczenia (learning rate)
+        self.gamma = 0.8  # współczynnik dyskontowania
         self.epsilon = 1.0  # epsilon (p-wo akcji losowej)
-        self.eps_decrement = 0.01  # wartość, o którą zmniejsza się epsilon po każdym kroku
-        self.eps_min = 0.01  # końcowa wartość epsilon, poniżej którego już nie jest zmniejszane
+        self.eps_decrement = 0.001  # wartość, o którą zmniejsza się epsilon po każdym kroku
+        self.eps_min = 0.001  # końcowa wartość epsilon, poniżej którego już nie jest zmniejszane
 
         self.action_space = [i for i in range(n_actions)]
         self.n_states = n_states
@@ -39,7 +39,7 @@ class QAgent(Agent):
     def learn(self, state: State, action: Action, reward: float, new_state: State, done: bool) -> None:
         current_q = self.q_table[state][action]
         max_future_q = np.max(self.q_table[new_state])
-        new_q = (1 - self.lr) * current_q + self.lr * (reward + self.gamma * max_future_q)
+        new_q = current_q + self.lr * (reward + self.gamma * max_future_q - current_q)
         self.q_table[state][action] = new_q
 
     def save(self, path):
