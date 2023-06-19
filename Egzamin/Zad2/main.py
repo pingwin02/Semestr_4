@@ -36,8 +36,11 @@ if __name__ == '__main__':
     pca = PCA(n_components=2)
     points_2d = pca.fit_transform(points_3d_stand)
 
-    print('Współrzędne punktów 2D (po PCA):')
+    print('Współrzędne punktów 2D (dla sklearn PCA):')
     print(points_2d)
+
+    print("Wektory własne (dla sklearn PCA):")
+    print(pca.components_)
 
     colors = ['red', 'green', 'blue']
 
@@ -56,7 +59,7 @@ if __name__ == '__main__':
     ax2 = fig.add_subplot(122)
     ax2.scatter(points_2d[:, 0], points_2d[:, 1], c=colors)
     ax2.scatter(points_2d_manual[:, 0], points_2d_manual[:, 1], c=colors, marker='x')
-    ax2.set_title('Punkty 2D (po PCA)')
+    ax2.set_title('Punkty 2D (po standaryzacji)')
     ax2.set_xlabel('X')
     ax2.set_ylabel('Y')
 
@@ -66,7 +69,7 @@ if __name__ == '__main__':
     for i, (x, y) in enumerate(points_2d_manual):
         ax2.text(x, y, f'({x:.2f}, {y:.2f})', color=colors[i], ha='center', va='top')
 
-    plt.legend(['PCA', 'Manual'])
+    plt.legend(['Sklearn PCA', 'Manualnie'], loc='center right')
     plt.tight_layout()
     plt.savefig('pca.png')
     plt.show()

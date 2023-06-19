@@ -31,19 +31,17 @@ to gałąź teorii sterowania i sztucznej inteligencji,
 która umożliwia modelowanie i sterowanie systemami, 
 charakteryzującymi się nieprecyzyjnymi lub niejednoznacznymi danymi. 
 W odróżnieniu od tradycyjnych podejść logicznych, 
-które operują na wartościach logicznych prawda/fałsz, 
+które operują na wartościach prawda/fałsz, 
 logika rozmyta umożliwia wyrażanie i manipulację stopniami 
-przynależności, które mogą mieć wartości w przedziale $[0, 1]$.
+przynależności, które mogą przyjmować wartości z przedziału $[0, 1]$.
 Pozwala to na wyrażanie niepewności i niejednoznaczności w sposób 
 bardziej naturalny.
 
 \subsubsection{Funkcje przynależności}
 
 Funkcje przynależności służą do opisu stopnia przynależności obiektów 
-do zbiorów rozmytych. Są to krzywe, które określają, jak 
-obiekty przynależą do danego zbioru w zależności od wartości 
-pewnych parametrów. Przykładowo, można zdefiniować funkcję 
-przynależności "wysoki" dla wzrostu człowieka, która będzie miała 
+do zbiorów rozmytych. Przykładowo, można zdefiniować funkcję 
+przynależności \textit{wysoki} dla wzrostu człowieka, która będzie miała 
 wartość bliską 1 dla osób bardzo wysokich i wartość bliską 0 dla 
 osób niskich. Wartości pośrednie będą odpowiadały osobom o
 średnim wzroście. Wyróżnia się kilka rodzajów funkcji
@@ -167,13 +165,13 @@ w pomieszczeniu. W tym celu należy zdefiniować:
 \begin{equation*}
     mn(x) = \begin{cases}
         1 & \text{dla } x \leq 30 \\
-        1 - \frac{x - 30}{40} & \text{dla } 30 < x < 70 \\
+        \frac{70 - x}{40} & \text{dla } 30 < x < 70 \\
         0 & \text{dla } x \geq 70
     \end{cases}, \quad
     ms(x) = \begin{cases}
         0 & \text{dla } x \leq 20 \\
         \frac{x - 20}{30} & \text{dla } 20 < x \leq 50 \\
-        1 - \frac{x - 50}{30} & \text{dla } 50 < x < 80 \\
+        \frac{80 - x}{30} & \text{dla } 50 < x < 80 \\
         0 & \text{dla } x \geq 80
     \end{cases}
 \end{equation*}
@@ -241,23 +239,23 @@ Postępujemy zgodnie z krokami opisanymi w rozdziale \ref{sec:etapy}.
 Ograniczamy funkcje przynależności do wartości obliczonych 
 w poprzednim kroku.
 \begin{enumerate}[label=Reguła \arabic*:, leftmargin=*]
-    \item $mn(x) = 0.25 => 1 - \frac{x - 30}{40} = 0.25 => x = 60$
+    \item $mn(x) = 0.25 => \frac{70 - x}{40} = 0.25 => x = 60$
     \item $ms(x) = 0.58 => \frac{x - 20}{30} = 0.58 => x_1 = 37.4$\\
-          $ms(x) = 0.58 => 1 - \frac{x - 50}{30} = 0.58 => x_2 = 62.6$
+          $ms(x) = 0.58 => \frac{80 - x}{30} = 0.58 => x_2 = 62.6$
     \item $mw(x) = 0.42 => \frac{x - 30}{40} = 0.42 => x = 46.8$
 \end{enumerate}
 
 \begin{enumerate}[label=Reguła \arabic*:, leftmargin=*]
     \item $s_1(x) = \begin{cases}
         0.25 & \text{dla } x \leq 60 \\
-        1 - \frac{x - 30}{40} & \text{dla } 60 < x < 70 \\
+        \frac{70 - x}{40} & \text{dla } 60 < x < 70 \\
         0 & \text{dla } x \geq 70
     \end{cases}$
     \item $s_2(x) = \begin{cases}
         0 & \text{dla } x \leq 20 \\
         \frac{x - 20}{30} & \text{dla } 20 < x \leq 37.4 \\
-        0.58 & \text{dla } 37.4 < x < 62.6 \\
-        1 - \frac{x - 50}{30} & \text{dla } 62.6 < x < 80 \\
+        0.58 & \text{dla } 37.4 < x \leq 62.6 \\
+        \frac{80 - x}{30} & \text{dla } 62.6 < x < 80 \\
         0 & \text{dla } x \geq 80
     \end{cases}$
     \item $s_3(x) = \begin{cases}
@@ -282,9 +280,9 @@ wyniku $s(x)$:
     s(x) = \begin{cases}
         0.25 & \text{dla } x \leq 27.5 \\
         \frac{x - 20}{30} & \text{dla } 27.5 < x \leq 37.4 \\
-        0.58 & \text{dla } 37.4 < x < 62.6 \\
-        1 - \frac{x - 50}{30} & \text{dla } 62.6 < x < 67.4 \\
-        0.42 & \text{dla } x \geq 67.4 \\
+        0.58 & \text{dla } 37.4 < x \leq 62.6 \\
+        \frac{80 - x}{30} & \text{dla } 62.6 < x \leq 67.4 \\
+        0.42 & \text{dla } x > 67.4 \\
     \end{cases}
 \end{equation}
 
@@ -303,11 +301,21 @@ Wyznaczamy środek ciężkości $s_c$ funkcji przynależności $s(x)$:
 \end{equation}
 Moc klimatyzatora powinna wynosić $54.23 \%$.
 
+\subsection{Wnioski}
+
+Model układu rozmytego w większości przypadków daje wyniki zadowalające.
+Natomiast w celu uzyskania dokładniejszych wyników należałoby zwiększyć liczbę reguł,
+oraz udoskonalić funkcje przynależności. Problemem może też być obliczenie środka
+ciężkości funkcji przynależności wyniku, ponieważ w przypadku, gdy funkcja ma
+bardzo nieregularny kształt, może być ono trudne do wyznaczenia.
+
+
 \section{Zadanie 2 - Redukcja wymiarów}
 
 Do przeprowadzenia redukcji wymiarów skorzystałem z metody PCA \textit{(Principal Component Analysis)}.
 Metoda ta polega na wyznaczeniu kierunków, w których występuje największa wariancja danych.
-Wyznaczone kierunki nazywamy głównymi składowymi. W celu wyznaczenia głównych składowych
+Wyznaczone kierunki nazywamy wektorami własnymi lub głównymi składowymi. 
+W celu wyznaczenia głównych składowych
 wykorzystujemy macierz kowariancji. Wyznaczone główne składowe są ortogonalne do siebie.
 W celu wyznaczenia nowych współrzędnych danych, należy pomnożyć macierz danych przez
 macierz głównych składowych.
@@ -502,9 +510,9 @@ znormalizowanych danych przez macierz wektorów własnych.
 \begin{equation*}
     X_{new} = 
     \begin{bmatrix}
-        -1.2247 & 0.2672 & -1.3363 \\
-        1.2247 & 1.069 & 0.2672 \\
-        0 & -1.3363 & 1.069 \\
+        -1.2247 & 0.2672 & 0 \\
+        1.2247 & 1.069 & -1.2247 \\
+        0 & -1.3363 & 1.2247 \\
     \end{bmatrix}
     \cdot
     \begin{bmatrix}
@@ -520,12 +528,35 @@ znormalizowanych danych przez macierz wektorów własnych.
     \end{bmatrix}
 \end{equation*}
 
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\linewidth]{Zad2/pca.png}
-    \caption{Wynik redukcji wymiarów}
+    \caption{Wynik redukcji wymiarów z porównaniem gotowego rozwiązania}
 \end{figure}
+
+Wynikowe punkty porównałem z gotową implementacją z biblioteki \textit{sklearn}.
+Jak można zauważyć punkty są odbite względem osi y.
+Nie zmienia to jednak jakości wyniku,
+po prostu drugi wektor własny może być przeciwnie skierowany.
+
+\begin{equation*}
+    V_{sklearn} = 
+    \begin{bmatrix}
+        0.42397 & -0.89385 \\
+        0.62384 & 0.40498 \\
+        -0.65655 & -0.19240 \\
+    \end{bmatrix}
+\end{equation*}
+
+\subsection{Wnioski}
+
+Metoda PCA pozwala na redukcję wymiarów danych, nie tracąc przy tym
+istotnych informacji o danych. W tym przypadku, po redukcji z 3 do 2 wymiarów,
+dane nadal są rozróżnialne, a ich odległości są zachowane. W przypadku
+większej liczby wymiarów, metoda PCA pozwala na wybranie tych, które
+najbardziej różnicują dane, a pozostałe odrzucić, tak jak w tym 
+przypadku odrzucono wektor własny odpowiadający najmniejszej wartości
+własnej ($v_3$).
 
 \section{Zadanie 3 - Szukanie minimum funkcji}
 
@@ -578,8 +609,7 @@ wyznaczenie 5 kolejnych punktów wygląda następująco:
     \end{aligned}
 \end{equation*}
 
-Dla tego przykładu wartość funkcji w punkcie $X_5$ wynosi $f(X_5) = 7.3727 \cdot 10^{-6}$ i 
-algorytm się kończy.
+Dla tego przykładu wartość funkcji w punkcie $X_5$ wynosi $f(X_5) = 7.3727 \cdot 10^{-6}$.
 
 \subsection{Metoda symulowanego wyżarzania}
 Metoda symulowanego wyżarzania polega na losowaniu kolejnych punktów
@@ -653,7 +683,9 @@ ale może mieć problemy z funkcjami nieliniowymi,
 gdzie minimum globalne znajduje się w dolinie.
 
 Metoda wyżarzania jest skuteczna, ale wymaga więcej czasu niż metoda 
-gradientowa. W przeciwieństwie do metody gradientowej, metoda 
+gradientowa. Ważnym czynnikiem jest dobór temperatury początkowej,
+jak również stopnia jej zmniejszania.
+W przeciwieństwie do metody gradientowej, metoda 
 wyżarzania nie zawsze znajduje globalne minimum, ale może znaleźć 
 rozwiązanie optymalne dla funkcji, które mają wiele minimów lokalnych. 
 
@@ -669,7 +701,7 @@ a także od czasu, jaki mamy na wykonanie obliczeń.
 \section{Zadanie 4 - Sieć neuronowa}
 
 Zadaniem jest zbudowanie sieci neuronowej, która będzie rozwiązywać
-pewien problem. Zdecydowałem się na rozwiązanie problemu klasyfikacji
+pewien zdefiniowany problem. Zdecydowałem się na rozwiązanie problemu klasyfikacji
 punktów w przestrzeni 2D. Model ma rozpoznawać czy dany punkt należy
 do zdefiniowanej wcześniej figury czy nie.
 
@@ -855,7 +887,7 @@ Model zdecydował o wybraniu następujących wag:
     \end{bmatrix}
 \end{equation*}
 
-Oraz następujących wag biasa:
+Oraz następującej wagi biasa:
 \begin{equation*}
     \begin{bmatrix}
         w_{55}
@@ -894,25 +926,23 @@ Załóżmy, że mamy zbiór danych uczących składający się z
 obserwacji $d$ i odpowiadających im etykiet klas $C$. 
 Klasyfikator Bayesa szacuje prawdopodobieństwo warunkowe 
 $P(C_i|d)$, czyli prawdopodobieństwo przynależności i-tej
-klasy do obserwacji. Wykorzystuje przy tym 
-twierdzenie Bayesa, które można zapisać jako:
+klasy do obserwacji. 
+Twierdzenie Bayesa, które wykorzystuje klasyfikator,
+można wyrazić wzorem:
 
 \begin{equation}
     P(C_i|d) = \frac{P(C_i)P(d|C_i)}{P(d)}
 \end{equation}
-
 Po zamianie obserwacji $d$ na wektor cech $w$ otrzymujemy:
 
 \begin{equation}
     P(C_i|w_1, w_2, ..., w_n) = \frac{P(C_i)P(w_1, w_2, ..., w_n|C_i)}{P(w_1, w_2, ..., w_n)}
 \end{equation}
-
 co można przedstawić w postaci:
 
 \begin{equation}
     P(C_i|w_1, w_2, ..., w_n) = \frac{P(C_i)\prod_{j=1}^{n}P(w_j|C_i)}{P(w_1, w_2, ..., w_n)}
 \end{equation}
-
 gdzie:
 \begin{itemize}
     \item $P(C_i)$ - prawdopodobieństwo wystąpienia i-tej klasy, wyrażona jako 
@@ -1023,6 +1053,7 @@ wystąpienia każdej z cech $w_j$ w każdej z klas $C_i$.
 
 Ostatnim krokiem jest wyznaczenie prawdopodobieństwa przynależności obserwacji $d_7$
 do każdej z klas $C_i$ i wybranie klasy o największym prawdopodobieństwie.
+Interesują nas tylko niezerowe cechy obserwacji $d_7$, czyli $w_1$ i $w_3$.
 
 \begin{equation}
     P(C_i|d_7) = P(C_i) \cdot P(w_1|C_i) \cdot P(w_3|C_i)
@@ -1062,5 +1093,15 @@ do każdej z klas $C_i$ i wybranie klasy o największym prawdopodobieństwie.
 \end{equation*}
 
 Obserwacja $d_7$ została zaklasyfikowana do klasy $C_3$.
+
+\subsection{Wnioski}
+
+Klasyfikator Bayesa może być niewystarczający w przypadku, gdy w zbiorze uczącym
+nie ma wystarczającej liczby obserwacji, które zawierają wszystkie cechy. W tym przypadku
+klasyfikator jest tylko w $1.18\%$ pewny, że obserwacja $d_7$ należy do klasy $C_3$,
+co dla niektórych zastosowań może być niewystarczające. Natomiast implementacja
+klasyfikatora jest bardzo prosta i nie wymaga wielu obliczeń, co jest jego dużą zaletą.
+
+
 
 \end{document}

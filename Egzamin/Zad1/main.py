@@ -14,11 +14,11 @@ def ww(x):
     return np.piecewise(x, [x <= 40, (40 < x) & (x < 100), x >= 100], [0, lambda x: (x - 40) / 60, 1])
 
 def mn(x):
-    return np.piecewise(x, [x <= 30, (30 < x) & (x < 70), x >= 70], [1, lambda x: 1 - (x - 30) / 40, 0])
+    return np.piecewise(x, [x <= 30, (30 < x) & (x < 70), x >= 70], [1, lambda x: (70 - x) / 40, 0])
 
 def ms(x):
     return np.piecewise(x, [x <= 20, (20 < x) & (x <= 50), (50 < x) & (x < 80), x >= 80],
-                        [0, lambda x: (x - 20) / 30, lambda x: 1 - (x - 50) / 30, 0])
+                        [0, lambda x: (x - 20) / 30, lambda x: (80 - x) / 30, 0])
 
 def mw(x):
     return np.piecewise(x, [x <= 30, (30 < x) & (x < 70), x >= 70], [0, lambda x: (x - 30) / 40, 1])
@@ -59,11 +59,11 @@ def plot_functions():
     plt.show()
 
 def s_1(x):
-    return np.piecewise(x, [x <= 60, (60 < x) & (x < 70), x >= 70], [0.25, lambda x: 1 - (x - 30) / 40, 0])
+    return np.piecewise(x, [x <= 60, (60 < x) & (x < 70), x >= 70], [0.25, lambda x: (70 - x) / 40, 0])
 
 def s_2(x):
     return np.piecewise(x, [x <= 20, (20 < x) & (x <= 37.4), (37.4 < x) & (x < 62.6), (62.6 < x) & (x < 80), x >= 80],
-                        [0, lambda x: (x - 20) / 30, 0.58, lambda x: 1 - (x - 50) / 30, 0])
+                        [0, lambda x: (x - 20) / 30, 0.58, lambda x: (80 - x) / 30, 0])
 
 def s_3(x):
     return np.piecewise(x, [x <= 30, (30 < x) & (x < 46.8), x >= 46.8], [0, lambda x: (x - 30) / 40, 0.42])
@@ -86,7 +86,7 @@ def plot_rules():
 
 def s(x):
     return np.piecewise(x, [x <= 27.5, (27.5 < x) & (x <= 37.4), (37.4 < x) & (x < 62.6), (62.6 < x) & (x < 67.4), x >= 67.4],
-                        [0.25, lambda x: (x - 20) / 30, 0.58, lambda x: 1 - (x - 50) / 30, 0.42])
+                        [0.25, lambda x: (x - 20) / 30, 0.58, lambda x: (80 - x) / 30, 0.42])
 
 def calculate_center_of_mass(x, y):
     x = np.sum(x * y) / np.sum(y)
