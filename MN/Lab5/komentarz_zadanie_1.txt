@@ -1,0 +1,5 @@
+Dla K=5 obie metody zinterpolowały zbliżone do siebie wartości próbek. 
+
+Natomiast wraz ze wzrostem K, metoda interpolacji wielomianowej była mniej dokładna na granicach interpolacji.
+
+Z kolei wykres interpolacji trygonometrycznej nie ulegał widocznej zmianie i był zbliżony wyglądem do wykresu wartości próbek.

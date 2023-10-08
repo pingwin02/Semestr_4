@@ -1,0 +1,8 @@
+(a) Jaka jest róznica pomiedzy interpolacja danych zawierajacych 151 
+wartosci oraz ich aproksymacja, gdy rzad aproksymacji wynosi 150?
+(b) Czy dla aproksymacji trygonometrycznej wystepuje efekt Rungego?
+
+a) W przypadku tak wysokiego rzędu aproksymacji, nie ma różnicy pomiędzy interpolacją a aproksymacją. Funkcja aproksymująca przechodzi wtedy przez
+wszystkie punkty pomiarowe.
+
+b) Dla aproksymacji trygonometrycznej nie występuje efekt Rungego.

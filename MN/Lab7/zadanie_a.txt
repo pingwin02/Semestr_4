@@ -1,0 +1,13 @@
+Wraz ze wzrostem dokładności N, błędy całkowania dla wszystkich
+metod malała. Ostatecznie dla N = 10^4, dla metody Monte Carlo 
+błąd oscylował wokół 10^-3, była więc najmniej dokładna spośród badanych metod, 
+ale również najprostszą w implementacji. Z kolei metody trapezów i prostokątów 
+odznaczały się błędem wielkości 10^-9.
+Metoda Simpsona była najdokładniejsza, błąd dla niej wynosił około 10^-17,
+z racji wykorzystywania parabol, które bardziej dopasowują się do kształtu
+funkcji.
+
+Czas potrzebny do wyznaczenia wartości całki dla N = 10^7 dla metod
+prostokątów oraz trapezów był najkrótszy (ok. 1 sekundy), a dla
+metody Simpsona około 3 razy dłuższy. Metoda Monte Carlo potrzebowała 
+około 2 sekund.

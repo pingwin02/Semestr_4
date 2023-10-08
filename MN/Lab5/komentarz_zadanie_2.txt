@@ -1,0 +1,3 @@
+Z wykresów wynika, że metoda interpolacji trygonometrycznej zbiega się wraz ze wzrostem K, tzn. różnice wartości między kolejnymi interpolacjami maleją do 0, natomiast w przypadku metody interpolacji wielomianowej wykres zbieżności jest niemonotoniczny.
+
+Jednym z powodów takiego zachowania jest efekt Rungego, który objawia się zwiększeniem oscylacji w interpolowanej funkcji na końcach przedziału interpolacji wraz ze wzrostem liczby węzłów interpolacji.
